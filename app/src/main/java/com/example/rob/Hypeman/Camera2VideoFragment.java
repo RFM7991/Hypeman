@@ -284,8 +284,8 @@ public class Camera2VideoFragment extends Fragment
 
     @Override
     public void onViewCreated(final View view, Bundle savedInstanceState) {
-        mTextureView = (AutoFitTextureView) view.findViewById(R.id.texture);
-        mButtonVideo = (Button) view.findViewById(R.id.video);
+        mTextureView = view.findViewById(R.id.texture);
+        mButtonVideo =  view.findViewById(R.id.video);
         mButtonVideo.setOnClickListener(this);
         view.findViewById(R.id.info).setOnClickListener(this);
     }
@@ -432,6 +432,7 @@ public class Camera2VideoFragment extends Fragment
             if (!mCameraOpenCloseLock.tryAcquire(2500, TimeUnit.MILLISECONDS)) {
                 throw new RuntimeException("Time out waiting to lock camera opening.");
             }
+
             String cameraId = manager.getCameraIdList()[1];
 
             // Choose the sizes for camera preview and video recording
@@ -594,7 +595,7 @@ public class Camera2VideoFragment extends Fragment
                 Log.d("App", "failed to create directory");
             }
         }
-
+// test
         int pictureIndex = mediaStorageDir.list().length + 1;
         if (mNextVideoAbsolutePath == null || mNextVideoAbsolutePath.isEmpty()) {
         //    mNextVideoAbsolutePath = getVideoFilePath(getActivity());
