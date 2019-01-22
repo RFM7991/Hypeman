@@ -1,3 +1,5 @@
+package com.example.rob.Hypeman;
+
 /*
  * Copyright 2014 The Android Open Source Project
  *
@@ -14,7 +16,6 @@
  * limitations under the License.
  */
 
-package com.example.rob.Hypeman;
 
 import android.Manifest;
 import android.app.Activity;
@@ -22,7 +23,6 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.Fragment;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
@@ -39,13 +39,9 @@ import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.MediaRecorder;
-import android.media.MediaScannerConnection;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v13.app.FragmentCompat;
 import android.support.v4.app.ActivityCompat;
@@ -60,8 +56,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.google.android.youtube.player.YouTubePlayerFragment;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -71,9 +65,8 @@ import java.util.List;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
-public class Camera2VideoFragment extends Fragment
+public class Camera2VideoFragmentTest extends Fragment
         implements View.OnClickListener, FragmentCompat.OnRequestPermissionsResultCallback {
-
 
     private static final int SENSOR_ORIENTATION_DEFAULT_DEGREES = 90;
     private static final int SENSOR_ORIENTATION_INVERSE_DEGREES = 270;
@@ -590,24 +583,9 @@ public class Camera2VideoFragment extends Fragment
         mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.SURFACE);
         mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-
-        ///////////////////////////////////////
-        File mediaStorageDir = new File(Environment.getExternalStorageDirectory(), "/Pictures/Hypeman");
-
-        if (!mediaStorageDir.exists()) {
-            if (!mediaStorageDir.mkdirs()) {
-                Log.d("App", "failed to create directory");
-            }
-        }
-// test
-        int pictureIndex = mediaStorageDir.list().length + 1;
         if (mNextVideoAbsolutePath == null || mNextVideoAbsolutePath.isEmpty()) {
-            //    mNextVideoAbsolutePath = getVideoFilePath(getActivity());
-            mNextVideoAbsolutePath =  Environment.getExternalStorageDirectory()+"/Pictures/Hypeman/vid" + pictureIndex + ".mp4";
+            mNextVideoAbsolutePath = getVideoFilePath(getActivity());
         }
-        ///////////////////////////////////////////
-   //     if (mNextVideoAbsolutePath == null || mNextVideoAbsolutePath.isEmpty()) {
-    //        mNextVideoAbsolutePath = getVideoFilePath(getActivity());
         mMediaRecorder.setOutputFile(mNextVideoAbsolutePath);
         mMediaRecorder.setVideoEncodingBitRate(10000000);
         mMediaRecorder.setVideoFrameRate(30);
@@ -623,21 +601,7 @@ public class Camera2VideoFragment extends Fragment
                 mMediaRecorder.setOrientationHint(INVERSE_ORIENTATIONS.get(rotation));
                 break;
         }
-        //test scan file
-       scanFile(mNextVideoAbsolutePath);
         mMediaRecorder.prepare();
-    }
-
-    private void scanFile(String path) {
-
-        MediaScannerConnection.scanFile(this.getContext(),
-                new String[] { path }, null,
-                new MediaScannerConnection.OnScanCompletedListener() {
-
-                    public void onScanCompleted(String path, Uri uri) {
-                        Log.i("TAG", "Finished scanning " + path);
-                    }
-                });
     }
 
     private String getVideoFilePath(Context context) {
@@ -803,6 +767,4 @@ public class Camera2VideoFragment extends Fragment
 
     }
 
-
 }
-

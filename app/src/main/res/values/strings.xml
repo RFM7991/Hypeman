@@ -16,4 +16,5 @@
     <string name="camera_error">This device doesn\'t support Camera2 API.</string>
     <string name="intro_message">intro message</string>
     <string name="start">Start</string>
+    <string name="test">test</string>
 </resources>

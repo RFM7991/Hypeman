@@ -259,7 +259,7 @@ public class MainActivity extends AppCompatActivity implements
 
         // Youtube
         YouTubePlayerFragment youTubePlayerFragment = (YouTubePlayerFragment) getFragmentManager().findFragmentById(R.id.youtubeplayerfragment);
-        youTubePlayerFragment.initialize("AIzaSyBVSgb0m8KxkiAwdFm0YWdsqi5VnC8fh20",this);
+       youTubePlayerFragment.initialize("AIzaSyBVSgb0m8KxkiAwdFm0YWdsqi5VnC8fh20",this);
 
         // Admob
         //     AdView mAdView;
@@ -273,6 +273,7 @@ public class MainActivity extends AppCompatActivity implements
 
         // camera
         if (null == savedInstanceState) {
+            //test camera
             getFragmentManager().beginTransaction()
                     .add(R.id.container2, Camera2VideoFragment.newInstance())
                     .commit();
@@ -455,6 +456,8 @@ public class MainActivity extends AppCompatActivity implements
         Button lastLyric = (Button) findViewById(R.id.lastLyric);
         Button nextLyric = (Button) findViewById(R.id.nextLyric);
         Button rootButton = (Button) findViewById(R.id.rootButton);
+
+
 
         for (int i =  0; i < loaded_JSON.get(0).size(); i++) {
             Log.i("lyrics-loaded", i + ": " + loaded_JSON.get(0).get(i));
