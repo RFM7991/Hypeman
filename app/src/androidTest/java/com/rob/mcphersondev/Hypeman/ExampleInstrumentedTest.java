@@ -1,4 +1,4 @@
-package com.example.rob.Hypeman;
+package com.rob.mcphersondev.Hypeman;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

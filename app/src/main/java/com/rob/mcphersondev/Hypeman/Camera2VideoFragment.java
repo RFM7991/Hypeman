@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.rob.Hypeman;
+package com.rob.mcphersondev.Hypeman;
 
 import android.Manifest;
 import android.app.Activity;
@@ -22,7 +22,6 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.Fragment;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
@@ -30,6 +29,7 @@ import android.content.res.Configuration;
 import android.graphics.Matrix;
 import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
+import android.graphics.drawable.Drawable;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraCharacteristics;
@@ -41,11 +41,11 @@ import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.MediaRecorder;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v13.app.FragmentCompat;
 import android.support.v4.app.ActivityCompat;
@@ -60,13 +60,13 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.google.android.youtube.player.YouTubePlayerFragment;
-
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
@@ -79,6 +79,7 @@ public class Camera2VideoFragment extends Fragment
     private static final int SENSOR_ORIENTATION_INVERSE_DEGREES = 270;
     private static final SparseIntArray DEFAULT_ORIENTATIONS = new SparseIntArray();
     private static final SparseIntArray INVERSE_ORIENTATIONS = new SparseIntArray();
+    public static int counter = 0;
 
     private static final String TAG = "Camera2VideoFragment";
     private static final int REQUEST_VIDEO_PERMISSIONS = 1;
@@ -134,6 +135,7 @@ public class Camera2VideoFragment extends Fragment
         @Override
         public void onSurfaceTextureAvailable(SurfaceTexture surfaceTexture,
                                               int width, int height) {
+            Log.d("surface", "surface available");
             openCamera(width, height);
         }
 
@@ -172,7 +174,7 @@ public class Camera2VideoFragment extends Fragment
     /**
      * Whether the app is recording video now
      */
-    private boolean mIsRecordingVideo;
+    private boolean mIsRecordingVideo = false;
 
     /**
      * An additional thread for running tasks that shouldn't block the UI.
@@ -188,6 +190,13 @@ public class Camera2VideoFragment extends Fragment
      * A {@link Semaphore} to prevent the app from exiting before closing the camera.
      */
     private Semaphore mCameraOpenCloseLock = new Semaphore(1);
+
+    /**
+     * A {@link Semaphore} to prevent the app from starting/stopping recording
+     * before the {@link MediaRecorder} is ready.
+     */
+    private Semaphore mRecordingLock = new Semaphore(1);
+
 
     /**
      * {@link CameraDevice.StateCallback} is called when {@link CameraDevice} changes its status.
@@ -220,16 +229,20 @@ public class Camera2VideoFragment extends Fragment
             if (null != activity) {
                 activity.finish();
             }
+
         }
+
 
     };
     private Integer mSensorOrientation;
     private String mNextVideoAbsolutePath;
+    private File nextVideoFile;
     private CaptureRequest.Builder mPreviewBuilder;
 
     public static Camera2VideoFragment newInstance() {
         return new Camera2VideoFragment();
     }
+
 
     /**
      * In this sample, we choose a video size with 3x4 aspect ratio. Also, we don't use sizes
@@ -291,7 +304,7 @@ public class Camera2VideoFragment extends Fragment
         mTextureView = (AutoFitTextureView) view.findViewById(R.id.texture);
         mButtonVideo = (Button) view.findViewById(R.id.video);
         mButtonVideo.setOnClickListener(this);
-        view.findViewById(R.id.info).setOnClickListener(this);
+        //    view.findViewById(R.id.info).setOnClickListener(this);
     }
 
     @Override
@@ -303,6 +316,8 @@ public class Camera2VideoFragment extends Fragment
         } else {
             mTextureView.setSurfaceTextureListener(mSurfaceTextureListener);
         }
+
+        Log.e("fragment", "camera resumed");
     }
 
     @Override
@@ -310,10 +325,14 @@ public class Camera2VideoFragment extends Fragment
         closeCamera();
         stopBackgroundThread();
         super.onPause();
+        Log.e("fragment", "camera paused");
     }
 
     @Override
     public void onClick(View view) {
+        if (!mRecordingLock.tryAcquire()) {
+            return;
+        }
         switch (view.getId()) {
             case R.id.video: {
                 if (mIsRecordingVideo) {
@@ -322,7 +341,7 @@ public class Camera2VideoFragment extends Fragment
                     startRecordingVideo();
                 }
                 break;
-            }
+            } /*
             case R.id.info: {
                 Activity activity = getActivity();
                 if (null != activity) {
@@ -332,7 +351,7 @@ public class Camera2VideoFragment extends Fragment
                             .show();
                 }
                 break;
-            }
+            } */
         }
     }
 
@@ -420,8 +439,9 @@ public class Camera2VideoFragment extends Fragment
     /**
      * Tries to open a {@link CameraDevice}. The result is listened by `mStateCallback`.
      */
-    @SuppressWarnings("MissingPermission")
+
     private void openCamera(int width, int height) {
+        Log.d("open Camera", "calling openCamera()");
         if (!hasPermissionsGranted(VIDEO_PERMISSIONS)) {
             requestVideoPermissions();
             return;
@@ -458,6 +478,18 @@ public class Camera2VideoFragment extends Fragment
             }
             configureTransform(width, height);
             mMediaRecorder = new MediaRecorder();
+            if (ActivityCompat.checkSelfPermission(activity.getBaseContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                Log.d("open camera", "permission not granted");
+                return;
+            }
+            Log.d("open camera", "permission  granted");
             manager.openCamera(cameraId, mStateCallback, null);
         } catch (CameraAccessException e) {
             Toast.makeText(activity, "Cannot access the camera.", Toast.LENGTH_SHORT).show();
@@ -473,6 +505,7 @@ public class Camera2VideoFragment extends Fragment
     }
 
     private void closeCamera() {
+        Log.e("fragment", "closeCamera");
         try {
             mCameraOpenCloseLock.acquire();
             closePreviewSession();
@@ -539,8 +572,7 @@ public class Camera2VideoFragment extends Fragment
         }
         try {
             setUpCaptureRequestBuilder(mPreviewBuilder);
-            HandlerThread thread = new HandlerThread("CameraPreview");
-            thread.start();
+
             mPreviewSession.setRepeatingRequest(mPreviewBuilder.build(), null, mBackgroundHandler);
         } catch (CameraAccessException e) {
             e.printStackTrace();
@@ -591,26 +623,46 @@ public class Camera2VideoFragment extends Fragment
         mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.SURFACE);
         mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
 
-        ///////////////////////////////////////
-        File mediaStorageDir = new File(Environment.getExternalStorageDirectory(), "/Pictures/Hypeman");
+        ///////////////////////////////////////////////////////////////////
+        /*
+           File mediaStorageDir = new File(Environment.getExternalStorageDirectory(), "/Pictures/Hypeman");
 
         if (!mediaStorageDir.exists()) {
             if (!mediaStorageDir.mkdirs()) {
-                Log.d("App", "failed to create directory");
+                Log.d("Camera", "failed to create directory");
             }
         }
-// test
-        int pictureIndex = mediaStorageDir.list().length + 1;
+
+        if (mediaStorageDir.exists()) {
+            Log.d("Camera", "directory exists");
+        }
+
+      //  int pictureIndex = mediaStorageDir.list().length + 1;
         if (mNextVideoAbsolutePath == null || mNextVideoAbsolutePath.isEmpty()) {
             //    mNextVideoAbsolutePath = getVideoFilePath(getActivity());
-            mNextVideoAbsolutePath =  Environment.getExternalStorageDirectory()+"/Pictures/Hypeman/vid" + pictureIndex + ".mp4";
+            mNextVideoAbsolutePath =  Environment.getExternalStorageDirectory().getAbsolutePath()+"/Pictures/Hypeman/vid" + ".mp4";
+            Log.d("camera", "nextVId path was empty");
         }
+
+     */
+        ////////////////////////////////////////////////////////
+// test
+
+        if (mNextVideoAbsolutePath == null || mNextVideoAbsolutePath.isEmpty()) {
+            mNextVideoAbsolutePath = getVideoFilePath(getActivity());
+                nextVideoFile = new File(mNextVideoAbsolutePath);
+
+       //     mNextVideoAbsolutePath = getVideoFilePath2();
+        }
+
         ///////////////////////////////////////////
-   //     if (mNextVideoAbsolutePath == null || mNextVideoAbsolutePath.isEmpty()) {
-    //        mNextVideoAbsolutePath = getVideoFilePath(getActivity());
+
+
+         //   mNextVideoAbsolutePath = getVideoFilePath(getActivity());
+
         mMediaRecorder.setOutputFile(mNextVideoAbsolutePath);
         mMediaRecorder.setVideoEncodingBitRate(10000000);
-        mMediaRecorder.setVideoFrameRate(30);
+        mMediaRecorder.setVideoFrameRate(60);
         mMediaRecorder.setVideoSize(mVideoSize.getWidth(), mVideoSize.getHeight());
         mMediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
         mMediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
@@ -640,10 +692,14 @@ public class Camera2VideoFragment extends Fragment
                 });
     }
 
+
     private String getVideoFilePath(Context context) {
-        final File dir = context.getExternalFilesDir(null);
+         File dir = context.getExternalFilesDir(null);
+        String fileName = new SimpleDateFormat("yyyyMMddHHmmss'.txt'").format(new Date());
+
+        int fileNumber = dir.listFiles().length;
         return (dir == null ? "" : (dir.getAbsolutePath() + "/"))
-                + System.currentTimeMillis() + ".mp4";
+                 + fileNumber + ".mp4";
     }
 
     private void startRecordingVideo() {
@@ -683,6 +739,7 @@ public class Camera2VideoFragment extends Fragment
                             // UI
                             mButtonVideo.setText(R.string.stop);
                             mIsRecordingVideo = true;
+                            mRecordingLock.release();
 
                             // Start recording
                             mMediaRecorder.start();
@@ -712,28 +769,67 @@ public class Camera2VideoFragment extends Fragment
     }
 
     private void stopRecordingVideo() {
-
-        try {
-            mPreviewSession.stopRepeating();
-        } catch (CameraAccessException e) {
-            e.printStackTrace();
-        }
         // UI
         mIsRecordingVideo = false;
         mButtonVideo.setText(R.string.record);
-        // Stop recording
-        mMediaRecorder.stop();
-        mMediaRecorder.reset();
-
         Activity activity = getActivity();
-        if (null != activity) {
-            Toast.makeText(activity, "Video saved: " + mNextVideoAbsolutePath,
-                    Toast.LENGTH_SHORT).show();
-            Log.d(TAG, "Video saved: " + mNextVideoAbsolutePath);
+
+        //Added by @skynetlabz to resolve exception issue when stop recording.
+        try {
+            mPreviewSession.stopRepeating();
+            mPreviewSession.abortCaptures();
+        } catch (CameraAccessException e) {
+            e.printStackTrace();
         }
+
+        // Stop recording
+        try {
+            mMediaRecorder.stop();
+            if (null != activity) {
+                Toast.makeText(activity, "Video saved: " + mNextVideoAbsolutePath,
+                        Toast.LENGTH_SHORT).show();
+                Log.d(TAG, "Video saved: " + mNextVideoAbsolutePath);
+            }
+        } catch (RuntimeException e) {
+            new File(mNextVideoAbsolutePath).delete();
+            e.printStackTrace();
+            Toast.makeText(activity, "No valid audio/video data: " + mNextVideoAbsolutePath,
+                    Toast.LENGTH_SHORT).show();
+            Log.d(TAG, "No valid audio/video data: " + mNextVideoAbsolutePath);
+        }
+        mMediaRecorder.reset();
         mNextVideoAbsolutePath = null;
         startPreview();
+        mRecordingLock.release();
     }
+/*
+    public void stopRecordingVideo()
+    {
+        //UI
+        // UI
+        Drawable start_recording =  getResources().getDrawable(R.drawable.ic_start_recording);
+        mIsRecordingVideo = false;
+        mButtonVideo.setBackground(start_recording);
+        mButtonVideo.setText(R.string.record);
+
+        if (null != getActivity()) {
+            Toast.makeText(getActivity(), "Video saved: " + mNextVideoAbsolutePath,
+                    Toast.LENGTH_SHORT).show();
+        }
+
+        //Stop recording
+			/*
+			mediaRecorder.Stop ();
+			mediaRecorder.Reset ();
+			startPreview ();
+			*/
+
+        // Workaround for https://github.com/googlesamples/android-Camera2Video/issues/2
+  //      closeCamera();
+   //     openCamera (mTextureView.getWidth(), mTextureView.getHeight());
+   // }
+
+
 
     /**
      * Compares two {@code Size}s based on their areas.

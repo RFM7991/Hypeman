@@ -1,4 +1,4 @@
-package com.example.rob.myapplication2;
+package com.rob.mcphersondev.myapplication2;
 
 import org.junit.Test;
 

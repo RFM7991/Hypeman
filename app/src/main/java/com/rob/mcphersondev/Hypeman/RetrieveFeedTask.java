@@ -1,14 +1,7 @@
-package com.example.rob.Hypeman;
+package com.rob.mcphersondev.Hypeman;
 
 import android.os.AsyncTask;
 import android.util.Log;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONTokener;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

@@ -1,45 +1,24 @@
-package com.example.rob.Hypeman;
+package com.rob.mcphersondev.Hypeman;
 
-import android.Manifest;
-import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
-import android.hardware.Camera;
-import android.hardware.camera2.CameraAccessException;
-import android.hardware.camera2.CameraCharacteristics;
+import android.graphics.drawable.Drawable;
 import android.hardware.camera2.CameraDevice;
-import android.hardware.camera2.CameraManager;
-import android.media.CamcorderProfile;
 import android.media.ImageReader;
-import android.media.MediaRecorder;
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
-import android.provider.MediaStore;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.SparseIntArray;
 import android.view.Surface;
-import android.view.SurfaceView;
 import android.view.TextureView;
 import android.view.View;
 import android.widget.Button;
 
-import com.example.rob.Hypeman.R;
-import com.google.android.gms.ads.AdListener;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdSize;
-import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.MobileAds;
-import com.google.android.youtube.player.YouTubeBaseActivity;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerFragment;
-import com.spotify.sdk.android.authentication.AuthenticationClient;
-import com.spotify.sdk.android.authentication.AuthenticationResponse;
-import com.spotify.sdk.android.player.Config;
 import com.spotify.sdk.android.player.Player;
 import com.spotify.sdk.android.player.Spotify;
 import com.spotify.sdk.android.player.SpotifyPlayer;
@@ -50,62 +29,22 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.AccessibleObject;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.ExecutionException;
 
-import android.widget.EditText;
-import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.VideoView;
 
-import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.player.ConnectionStateCallback;
 import com.spotify.sdk.android.player.Error;
 import com.spotify.sdk.android.player.PlayerEvent;
-import android.content.Context;
-import android.content.pm.PackageManager;
-import android.graphics.ImageFormat;
-import android.graphics.SurfaceTexture;
-import android.hardware.camera2.CameraAccessException;
+
 import android.hardware.camera2.CameraCaptureSession;
-import android.hardware.camera2.CameraCharacteristics;
-import android.hardware.camera2.CameraDevice;
-import android.hardware.camera2.CameraManager;
-import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureRequest;
-import android.hardware.camera2.TotalCaptureResult;
-import android.hardware.camera2.params.StreamConfigurationMap;
-import android.media.Image;
-import android.media.ImageReader;
-import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.util.Size;
-import android.util.SparseIntArray;
-import android.view.Surface;
-import android.view.TextureView;
-import android.view.View;
-import android.widget.Button;
-import android.widget.Toast;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import static android.provider.AlarmClock.EXTRA_MESSAGE;
 
 public class MainActivity extends AppCompatActivity implements
         SpotifyPlayer.NotificationCallback, ConnectionStateCallback, YouTubePlayer.OnInitializedListener {
@@ -125,72 +64,13 @@ public class MainActivity extends AppCompatActivity implements
     public int lyricIndex = 0;
     public int rootsLoaded = 0;
     private final String ROOTS_URL = "https://api.jsonbin.io/b/5c40ab4a7b31f426f85b4cb1";
-    // roots must be longer than 4 letters
-    // later make object with param for root and url
-    //   private String[] roots =/* {"socrates", "start", "flip", "stop", "free", "style", "guillotine", "sword", "hell",
-    //      "mars", "face", "brew", "boots", "bike", "floor",  "function", "pretend",
-    //    "yes", "brother", "rumble",  "shadow", "socks", "quick"};
-    //                   */
+
    // public ArrayList<Root> rootArr;
     public ArrayList<Root> rootArr = new ArrayList<>();
 
     {
-
-
         // https://api.jsonbin.io/b/5c40ab4a7b31f426f85b4cb1
-/*
-        // one syllable
-        rootArr.add(new Root("sword", "http://api.jsonbin.io/b/5b087e027a973f4ce5784768"));
-        rootArr.add(new Root("start", "http://api.jsonbin.io/b/5b087ee77a973f4ce578476a"));
-        rootArr.add(new Root("flip", "http://api.jsonbin.io/b/5b0811c1c2e3344ccd96c126"));
-        rootArr.add(new Root("stop", "http://api.jsonbin.io/b/5b08122ac83f6d4cc7349e1b"));
-        rootArr.add(new Root("free", "http://api.jsonbin.io/b/5b088008c2e3344ccd96c16a"));
-        rootArr.add(new Root("style", "http://api.jsonbin.io/b/5b088059c83f6d4cc7349e69"));
-        rootArr.add(new Root("hell", "http://api.jsonbin.io/b/5b08808cc2e3344ccd96c171"));
-        rootArr.add(new Root("mars", "http://api.jsonbin.io/b/5b0880b97a973f4ce5784771"));
-        rootArr.add(new Root("face", "http://api.jsonbin.io/b/5b0886d37a973f4ce5784777"));
-        rootArr.add(new Root("boots", "http://api.jsonbin.io/b/5b088809c83f6d4cc7349e72"));
 
-        // 2.0
-        rootArr.add(new Root("Peace", "http://api.jsonbin.io/b/5b259cf6287f6a187c06f890"));
-        rootArr.add(new Root("Nice", "http://api.jsonbin.io/b/5b258c887a7d19187640226b"));
-        rootArr.add(new Root("Smooth", "http://api.jsonbin.io/b/5b258dcc287f6a187c06f87b"));
-        rootArr.add(new Root("axe", "http://api.jsonbin.io/b/5b25a48a7a7d19187640228a"));
-        rootArr.add(new Root("course", "http://api.jsonbin.io/b/5b25a7ba7a7d19187640228e"));
-
-        // two syllables
-        rootArr.add(new Root("program", "http://api.jsonbin.io/b/5b088af7c83f6d4cc7349e74"));
-        rootArr.add(new Root("precise", "http://api.jsonbin.io/b/5b089a89c83f6d4cc7349e86"));
-        rootArr.add(new Root("tonight", "http://api.jsonbin.io/b/5b08a874c2e3344ccd96c189"));
-        rootArr.add(new Root("speaker", "http://api.jsonbin.io/b/5b08aa350fb4d74cdf23e66b"));
-        rootArr.add(new Root("flavor", "http://api.jsonbin.io/b/5b08ad2c0fb4d74cdf23e66d"));
-        rootArr.add(new Root("nation", "http://api.jsonbin.io/b/5b08add70fb4d74cdf23e66f"));
-        rootArr.add(new Root("label", "http://api.jsonbin.io/b/5b08b03e0fb4d74cdf23e675"));
-        rootArr.add(new Root("Design", "http://api.jsonbin.io/b/5b08b0c30fb4d74cdf23e677"));
-        rootArr.add(new Root("backpack", "http://api.jsonbin.io/b/5b08b195c2e3344ccd96c193"));
-
-        //three syllables
-        rootArr.add(new Root("guillotine", "http://api.jsonbin.io/b/5b0882777a973f4ce5784775"));
-        rootArr.add(new Root("socrates", "http://api.jsonbin.io/b/5b08818cc83f6d4cc7349e6c/2"));
-
-        // near rhymes
-        rootArr.add(new Root("pocket", "http://api.jsonbin.io/b/5b19a9430fb4d74cdf23f457"));
-        rootArr.add(new Root("power", "http://api.jsonbin.io/b/5b19d5d4c2e3344ccd96cf95"));
-        rootArr.add(new Root("confirm", "http://api.jsonbin.io/b/5b19d6f40fb4d74cdf23f475"));
-        rootArr.add(new Root("online", "http://api.jsonbin.io/b/5b19d810c2e3344ccd96cf97/1"));
-        rootArr.add(new Root("master", "http://api.jsonbin.io/b/5b19d8c7c83f6d4cc734acb3"));
-        rootArr.add(new Root("pretend", "http://api.jsonbin.io/b/5b0895c27a973f4ce5784780/1"));
-        rootArr.add(new Root("rumble", "http://api.jsonbin.io/b/5b089964c83f6d4cc7349e84/1"));
-        rootArr.add(new Root("provide", "http://api.jsonbin.io/b/5b22bad58bdb2a3588e207e1"));
-        rootArr.add(new Root("fashion", "http://api.jsonbin.io/b/5b22b0728bdb2a3588e207d7"));
-        rootArr.add(new Root("logic", "http://api.jsonbin.io/b/5b22b3b14e1aee358ec705a2"));
-        rootArr.add(new Root("poet", "http://api.jsonbin.io/b/5b22b224bd4c0f35a0b468f7"));
-        rootArr.add(new Root("ladies", "http://api.jsonbin.io/b/5b22b50abd4c0f35a0b468fb"));
-
-        //    rootArr.add(new Root("", ""))
-
-        //    rootArr.add(new Root("", ""));
-    */
     }
 
 
@@ -217,6 +97,10 @@ public class MainActivity extends AppCompatActivity implements
     private boolean mFlashSupported;
     private Handler mBackgroundHandler;
     private HandlerThread mBackgroundThread;
+
+    private Camera2VideoFragment cameraFragment;
+
+    private Bundle savedState;
     ///////////////////////
 
     // Recorder 2
@@ -225,6 +109,7 @@ public class MainActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        savedState = savedInstanceState;
 
 
 /*
@@ -261,38 +146,44 @@ public class MainActivity extends AppCompatActivity implements
         YouTubePlayerFragment youTubePlayerFragment = (YouTubePlayerFragment) getFragmentManager().findFragmentById(R.id.youtubeplayerfragment);
        youTubePlayerFragment.initialize("AIzaSyBVSgb0m8KxkiAwdFm0YWdsqi5VnC8fh20",this);
 
-        // Admob
-        //     AdView mAdView;
 
-        //      MobileAds.initialize(this,"ca-app-pub-1118271101921860~8233524493");
+        // Intro Alert Message
+        new AlertDialog.Builder(this)
+                .setMessage(R.string.intro_message)
+                .setPositiveButton(android.R.string.ok, null)
+                .show();
 
-        //      mAdView = findViewById(R.id.adView);
-        //       AdRequest adRequest = new AdRequest.Builder().build();
-        //       mAdView.loadAd(adRequest);
+        cameraFragment = null;
 
-
-        // camera
-        if (null == savedInstanceState) {
-            //test camera
-            getFragmentManager().beginTransaction()
-                    .add(R.id.container2, Camera2VideoFragment.newInstance())
-                    .commit();
-
+        try {
+            pressRoot((Button) findViewById(R.id.rootButton));
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
-
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
     }
 
+    protected void onPause() {
+        super.onPause();
+        Log.e("onPause", "paused");
+
+    //    if (cameraFragment != null) {
+     //       cameraFragment.onPause();
+    //    }
+
+    }
     //on resume
     protected void onResume() {
         for (int i = 0; i < rootPool.size(); i++) {
-            Log.i("all-roots", i + ": " + rootPool.get(i).root);
+      //      Log.i("all-roots", i + ": " + rootPool.get(i).root);
         }
         super.onResume();
-        Log.i("static",  "" + rootsLoaded);
+      //  Log.i("static",  "" + rootsLoaded);
 
         new Thread(new Runnable() {
             @Override
@@ -304,7 +195,7 @@ public class MainActivity extends AppCompatActivity implements
                         e.printStackTrace();
                     }
                     //      Log.i("static", "loaded_JSON.size: " + loaded_JSON.size());
-                    Log.i("static", "rootPool.size: " + rootPool.size());
+              //      Log.i("static", "rootPool.size: " + rootPool.size());
                     if (rootPool.size() <= 15) {
                         ArrayList<Root> rootReload = new ArrayList<Root>();
                         for (int i = 0; i < rootArr.size(); i++) {
@@ -319,14 +210,14 @@ public class MainActivity extends AppCompatActivity implements
                     }
 
                     if (loaded_JSON.size() < 15 && loaded_JSON.size() != JSONArr.length()) {
-                        Log.i("static", "subload");
+                  //      Log.i("static", "subload");
                         loadLyrics(1);
                     }
                 }
             }
         }).start();
 
-        Log.e(TAG, "onResume");
+    //    Log.e(TAG, "onResume");
     }
 
     // call API, update Lyric Pool Array
@@ -402,6 +293,51 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
+    public void pressInfo(View view) throws IOException {
+        // Intro Alert Message
+        new AlertDialog.Builder(this)
+                .setMessage(R.string.intro_message)
+                .setPositiveButton(android.R.string.ok, null)
+                .show();
+    }
+
+    public void pressCamera(View view) throws IOException {
+        RelativeLayout cameraPreview = (RelativeLayout) findViewById(R.id.container2);
+        Button cameraButton = (Button) findViewById(R.id.video_switch);
+        Button recordButton = (Button) findViewById(R.id.video);
+        Drawable cameraOn = getResources().getDrawable(R.drawable.ic_camera_on);
+        Drawable cameraOff = getResources().getDrawable(R.drawable.ic_camera_off);
+
+
+
+        Log.e("CameraPreview"," "+ cameraPreview.getVisibility());
+        // camera
+        if (savedState == null && cameraPreview.getVisibility() == View.INVISIBLE) {
+            cameraPreview.setVisibility(View.VISIBLE);
+
+            //test camera
+            getFragmentManager().beginTransaction()
+                    .add(R.id.container2, Camera2VideoFragment.newInstance(), "cameraFragment")
+                    .commit();
+
+            // change camera button
+            cameraButton.setBackground(cameraOff);
+
+
+        }
+        else {
+            cameraPreview.setVisibility(View.INVISIBLE);
+
+            // remove camera2VideoFragment
+            Fragment fragment = getSupportFragmentManager().findFragmentByTag("cameraFragment");
+            if(fragment != null)
+                getSupportFragmentManager().beginTransaction().remove(fragment).commit();
+
+            // change camera button
+            cameraButton.setBackground(cameraOn);
+        }
+    }
+
     /** Called when the user taps the Root button */
     public void pressRoot(View view) throws IOException, JSONException {
         Button rootButton = (Button)findViewById(R.id.rootButton);
@@ -433,7 +369,7 @@ public class MainActivity extends AppCompatActivity implements
             Log.i("remove1", lyricPool.get(0));
             loaded_JSON.remove(0);
             Log.i("remove2", lyricPool.get(0));
-
+/*
             // update rootButton
             rootButton.setText(currentRoot);
             rootPool.remove(0);
@@ -447,7 +383,28 @@ public class MainActivity extends AppCompatActivity implements
             pressLyric(moreLyrics);
             rootsLoaded--;
         }
+*/
+        // new 4:59
+        lyricPool.add(currentRoot);
+
+        // update rootButton
+        // not changes, just
+        rootButton.setText(lyricPool.get(lyricIndex));
+        lyricPool.remove(lyricIndex);
+        rootPool.remove(0);
+
+        // Root preview
+        if (rootPool.size() <= 1) {
+            root_preview.setText("");
+        } else {
+            root_preview.setText(loaded_JSON.get(0).get(0));
+
+        }
+        pressLyric(moreLyrics);
+        rootsLoaded--;
     }
+    }
+
 
     /** Called when the user taps the center button */
     public void pressLyric(View view) throws IOException, JSONException {
@@ -458,7 +415,7 @@ public class MainActivity extends AppCompatActivity implements
         Button rootButton = (Button) findViewById(R.id.rootButton);
 
 
-
+/*
         for (int i =  0; i < loaded_JSON.get(0).size(); i++) {
             Log.i("lyrics-loaded", i + ": " + loaded_JSON.get(0).get(i));
         }
@@ -466,6 +423,7 @@ public class MainActivity extends AppCompatActivity implements
         for (int i =  0; i < api_Lyrics.size(); i++) {
             Log.i("lyrics-api", i + ": " + api_Lyrics.get(i));
         }
+     */
         if (rootButton.getText().toString().equals("Roots")) {
             pressRoot(rootButton);
         } else {
@@ -508,6 +466,7 @@ public class MainActivity extends AppCompatActivity implements
                 pressRoot((Button) findViewById(R.id.rootButton));
             } else {
                 // left button
+                rootButton.setText(lastLyric.getText());
                 lastLyric.setText(lyricPool.get(lyricIndex));
                 lyricPool.remove(lyricIndex);
             }
@@ -530,6 +489,7 @@ public class MainActivity extends AppCompatActivity implements
             if (lyricPool.size() < 1) {
                 pressRoot((Button) findViewById(R.id.rootButton));
             } else {
+                rootButton.setText(lowerButton.getText());
                 lowerButton.setText(lyricPool.get(lyricIndex));
                 lyricPool.remove(lyricIndex);
             }
@@ -553,6 +513,7 @@ public class MainActivity extends AppCompatActivity implements
                 pressRoot((Button) findViewById(R.id.rootButton));
             } else {
                 // right button
+                rootButton.setText(nextLyric.getText());
                 nextLyric.setText(lyricPool.get(lyricIndex));
                 lyricPool.remove(lyricIndex);
             }
@@ -755,7 +716,7 @@ public class MainActivity extends AppCompatActivity implements
         int index = loaded_JSON.size();
         // Log.i("Static", "loadLyrics: " + index);
         for (int i = index; i < index+loadSize; i++) {
-            Log.i("Static", "Root: " + i);
+     //       Log.i("Static", "Root: " + i);
             try {
                 cAPI(rootPool.get(i).root, rootPool.get(i).url);
                 loaded_JSON.add(api_Lyrics);

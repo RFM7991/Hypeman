@@ -1,11 +1,6 @@
-package com.example.rob.Hypeman;
+package com.rob.mcphersondev.Hypeman;
 
 import android.util.Log;
-
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -14,30 +9,67 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
-public class JSONRootRetriever {
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
-    private  String GET_URL = "";
-    private ArrayList<Root> rootArray = new ArrayList<>();
+public class JSON {
 
-    public JSONRootRetriever(String url) {
-        GET_URL = url;
+    private final String GET_URL = "http://rhymebrain.com/talk?function=getRhymes&word=";
+
+    private ArrayList<String> wordList, rootList, rootPool;
+    private int rootIndex;
+
+    public JSON(ArrayList inRootList) {
+        wordList = new ArrayList<String>();
+        rootList = inRootList;
+        rootPool = inRootList;
     }
 
-    public ArrayList<Root> getRoots() throws IOException {
+    public void setRootIndex(int i) {
+        rootIndex = i;
+    }
 
-        Log.i("JSONRootRetriever","Processing Get Request...");
+    public int getRootIndex() {
+        return rootIndex;
+    }
+
+    public void clearWordList() {
+        wordList.clear();
+    }
+
+    public ArrayList<String> getWordList() {
+        return wordList;
+    }
+
+    public ArrayList<String> getRootList() {
+        return rootList;
+    }
+
+    public ArrayList<String> getPool() {
+        return rootPool;
+    }
+
+
+    public ArrayList<String> getRhyme(String word) throws IOException {
+        String returnLine = "";
+        String searchResults = "";
+        String Search_Term = word;
+
+        Log.i("MyApplication2","Processing Get Request...");
         for (int j = 1; j < 2; j++) {
             int perPage = 100;
             // int currentPage = 1;
             String Per_Page = "&per_page=" + perPage;
             String Curr_Page = "?page=" + j;
 
-            URL obj = new URL(GET_URL);
+            URL obj = new URL(GET_URL + Search_Term);
             HttpURLConnection con = (HttpURLConnection) obj.openConnection();
             con.setRequestMethod("GET");
             //	con.setRequestProperty("Authorization", "Bearer ");
             int responseCode = con.getResponseCode();
-            Log.i("JSONRootRetriever","j + \": GET Response Code :: \" + responseCode");
+            Log.i("MyApplication2","j + \": GET Response Code :: \" + responseCode");
             if (responseCode == HttpURLConnection.HTTP_OK) { // success
                 BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
                 String inputLine;
@@ -59,7 +91,7 @@ public class JSONRootRetriever {
                 //		returnLine = inputLine;
                 //		System.out.println(returnLine);
                 in.close();
-                		System.out.println("Results: " + "\n" + response.toString());
+                //		System.out.println("Results: " + "\n" + response.toString());
 
                 // JSON Reader
                 try {
@@ -74,11 +106,11 @@ public class JSONRootRetriever {
                         // Get the index of the JSON object and print the values as per the index
                         JSONObject jsonObj1 = (JSONObject) jsonArr.get(i);
 
-                        String root = jsonObj1.get("root").toString();
-                        String url = jsonObj1.get("url").toString();
-
-                        rootArray.add(new Root(root, url));
-
+                        if (!jsonObj1.get("word").toString().contains(" ")
+                                && jsonObj1.get("flags").toString().contains("bc")) {
+                            searchResults += jsonObj1.get("word") + "\n";
+                            wordList.add(jsonObj1.get("word").toString());
+                        }
 
                     }
                     Thread.sleep(250);
@@ -92,6 +124,6 @@ public class JSONRootRetriever {
             }
 
         }
-        return rootArray;
+        return wordList;
     }
 }

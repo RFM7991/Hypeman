@@ -9,12 +9,13 @@
     <string name="take_picture" />
     <string name="take_video">Take video</string>
 
-    <string name="record">Record</string>
+    <string name="record">Rec</string>
     <string name="stop">Stop</string>
     <string name="description_info">Info</string>
     <string name="permission_request">This sample needs permission for camera and audio recording.</string>
     <string name="camera_error">This device doesn\'t support Camera2 API.</string>
-    <string name="intro_message">intro message</string>
+    <string name="intro_message">Welcome to Hypeman Beta! Press any button to begin. Root words appear on top, while rhymes appear on the bottom. Tap more for more rhymes, and tap the root button for the next root.</string>
     <string name="start">Start</string>
     <string name="test">test</string>
+    <string name="Camera">Camera</string>
 </resources>

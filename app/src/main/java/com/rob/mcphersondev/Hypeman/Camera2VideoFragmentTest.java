@@ -1,4 +1,4 @@
-package com.example.rob.Hypeman;
+package com.rob.mcphersondev.Hypeman;
 
 /*
  * Copyright 2014 The Android Open Source Project

@@ -5,30 +5,68 @@
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorAccent"
-    tools:context="com.example.rob.Hypeman.MainActivity">
+    android:background="@drawable/main_background"
+    tools:context="com.rob.mcphersondev.Hypeman.MainActivity">
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/container2"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"></RelativeLayout>
+        android:layout_height="match_parent"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"></RelativeLayout>
 
     <TextView
         android:id="@+id/nextRoot"
-        android:layout_width="110dp"
-        android:layout_height="32dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
         android:ems="10"
         android:gravity="center"
         android:text="@string/Next"
         android:textAllCaps="true"
         android:textColor="@color/colorAccent"
         android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="@+id/rootButton"
+        app:layout_constraintBottom_toTopOf="@+id/rootButton"
         app:layout_constraintEnd_toStartOf="@+id/guideline2"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="@+id/guideline1"
-        app:layout_constraintTop_toBottomOf="@+id/guideline14"
-        app:layout_constraintVertical_bias="0.478" />
+        app:layout_constraintTop_toBottomOf="@+id/guideline14" />
+
+    <Button
+        android:id="@+id/video_switch"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_gravity="left"
+        android:layout_marginBottom="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/ic_camera_on"
+
+        android:onClick="pressCamera"
+        app:layout_constraintBottom_toTopOf="@+id/guideline14"
+        app:layout_constraintStart_toStartOf="@+id/guideline5"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/info"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_gravity="left"
+        android:layout_marginBottom="8dp"
+
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:background="@drawable/ic_info"
+        android:onClick="pressInfo"
+        app:layout_constraintBottom_toTopOf="@+id/guideline14"
+        app:layout_constraintEnd_toStartOf="@+id/guideline11"
+        app:layout_constraintStart_toStartOf="@+id/guideline2"
+        app:layout_constraintTop_toTopOf="parent"/>
 
 
     <Button
@@ -39,6 +77,8 @@
         android:gravity="center"
         android:onClick="pressRoot"
         android:text="@string/roots"
+        android:background="@drawable/border_radius"
+        android:textColor="@drawable/button_text_color"
         app:layout_constraintBottom_toTopOf="@+id/guideline3"
         app:layout_constraintEnd_toEndOf="@+id/guideline2"
         app:layout_constraintHeight_default="percent"
@@ -56,6 +96,8 @@
         android:gravity="center"
         android:onClick="pressLowerLyric"
         android:text="@string/lyrics"
+        android:background="@drawable/border_radius"
+        android:textColor="@drawable/button_text_color"
 
         app:layout_constraintBottom_toTopOf="@+id/guideline9"
         app:layout_constraintEnd_toEndOf="@+id/guideline2"
@@ -74,6 +116,8 @@
         android:gravity="center"
         android:onClick="pressLast"
         android:text="@string/Last"
+        android:textColor="@drawable/button_text_color"
+        android:background="@drawable/border_radius"
         app:layout_constraintBottom_toTopOf="@+id/guideline4"
         app:layout_constraintEnd_toStartOf="@+id/guideline6"
         app:layout_constraintHeight_default="percent"
@@ -91,6 +135,8 @@
         android:gravity="center"
         android:onClick="pressNext"
         android:text="@string/Next"
+        android:background="@drawable/border_radius"
+        android:textColor="@drawable/button_text_color"
         app:layout_constraintBottom_toTopOf="@+id/guideline4"
         app:layout_constraintEnd_toStartOf="@+id/guideline11"
         app:layout_constraintHeight_default="percent"
@@ -107,6 +153,8 @@
         android:alpha="0.7"
         android:onClick="pressLyric"
         android:text="@string/More"
+        android:textColor="@drawable/button_text_color"
+        android:background="@drawable/border_radius"
         app:layout_constraintBottom_toTopOf="@+id/lyricButton"
         app:layout_constraintEnd_toStartOf="@+id/guideline10"
         app:layout_constraintHeight_default="percent"
