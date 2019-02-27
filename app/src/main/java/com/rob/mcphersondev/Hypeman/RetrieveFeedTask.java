@@ -32,13 +32,15 @@ class RetrieveFeedTask extends AsyncTask<String, Void, String> {
             urlConnection.setRequestProperty("secret-key", "$2a$10$EPfJXSb9ngHBmHphdZ8Zfuk0YzPduXaA9LaGPAuuzjYFDgAKrIZ3S");
             Log.i("INFO", "URL " + url.toString());
             try {
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-                StringBuilder stringBuilder = new StringBuilder();
-                String line;
-                while ((line = bufferedReader.readLine()) != null) {
-                    stringBuilder.append(line).append("\n");
+                StringBuilder stringBuilder;
+                try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()))) {
+                    stringBuilder = new StringBuilder();
+                    String line;
+                    while ((line = bufferedReader.readLine()) != null) {
+                        stringBuilder.append(line).append("\n");
+                    }
+                    bufferedReader.close();
                 }
-                bufferedReader.close();
                 return stringBuilder.toString();
             }
             finally{

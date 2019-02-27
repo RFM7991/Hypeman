@@ -37,6 +37,17 @@
         app:layout_constraintStart_toStartOf="@+id/guideline1"
         app:layout_constraintTop_toBottomOf="@+id/guideline14" />
 
+    <ImageView
+        android:id="@+id/headphones"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@id/guideline8"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/guideline15"
+        app:srcCompat="@drawable/hypeman_logo_headphones"
+        android:alpha="0.4"/>
+
     <Button
         android:id="@+id/video_switch"
         android:layout_width="40dp"
@@ -73,7 +84,7 @@
         android:id="@+id/rootButton"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:alpha="0.7"
+        android:alpha="0.8"
         android:gravity="center"
         android:onClick="pressRoot"
         android:text="@string/roots"
@@ -92,7 +103,7 @@
         android:id="@+id/lyricButton"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:alpha="0.7"
+        android:alpha="0.8"
         android:gravity="center"
         android:onClick="pressLowerLyric"
         android:text="@string/lyrics"
@@ -112,7 +123,7 @@
         android:id="@+id/lastLyric"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:alpha="0.7"
+        android:alpha="0.8"
         android:gravity="center"
         android:onClick="pressLast"
         android:text="@string/Last"
@@ -131,7 +142,7 @@
         android:id="@+id/nextLyric"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:alpha="0.7"
+        android:alpha="0.8"
         android:gravity="center"
         android:onClick="pressNext"
         android:text="@string/Next"
@@ -163,6 +174,8 @@
         app:layout_constraintTop_toBottomOf="@+id/rootButton"
         app:layout_constraintWidth_default="percent"
         app:layout_constraintWidth_percent=".18" />
+
+
 
 
     <android.support.constraint.Group
@@ -282,6 +295,7 @@
         app:layout_constraintTop_toTopOf="@+id/guideline15"
         app:layout_constraintWidth_default="percent"
         app:layout_constraintWidth_percent="1" />
+
 
 
 

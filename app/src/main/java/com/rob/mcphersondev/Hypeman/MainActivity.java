@@ -19,9 +19,6 @@ import android.widget.Button;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerFragment;
-import com.spotify.sdk.android.player.Player;
-import com.spotify.sdk.android.player.Spotify;
-import com.spotify.sdk.android.player.SpotifyPlayer;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -33,12 +30,9 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.ExecutionException;
 
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
-import com.spotify.sdk.android.player.ConnectionStateCallback;
-import com.spotify.sdk.android.player.Error;
-import com.spotify.sdk.android.player.PlayerEvent;
 
 import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CaptureRequest;
@@ -46,13 +40,11 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.util.Size;
 
-public class MainActivity extends AppCompatActivity implements
-        SpotifyPlayer.NotificationCallback, ConnectionStateCallback, YouTubePlayer.OnInitializedListener {
+public class MainActivity extends AppCompatActivity implements YouTubePlayer.OnInitializedListener {
 
     private static final String CLIENT_ID = "e20e5b14c264467281e102378cf45708";
     private static final String REDIRECT_URI = "https://msuweb.montclair.edu/~mcphersonr1/callback";
     private static final int RECOVERY_DIALOG_REQUEST = 1;
-    private Player mPlayer;
     private static final int REQUEST_CODE = 1337;
 
     public JSONArray JSONArr = null;
@@ -307,13 +299,17 @@ public class MainActivity extends AppCompatActivity implements
         Button recordButton = (Button) findViewById(R.id.video);
         Drawable cameraOn = getResources().getDrawable(R.drawable.ic_camera_on);
         Drawable cameraOff = getResources().getDrawable(R.drawable.ic_camera_off);
+        ImageView headphones = (ImageView) findViewById(R.id.headphones);
 
 
 
-        Log.e("CameraPreview"," "+ cameraPreview.getVisibility());
+
+
+    //    Log.e("CameraPreview"," "+ cameraPreview.getVisibility());
         // camera
         if (savedState == null && cameraPreview.getVisibility() == View.INVISIBLE) {
             cameraPreview.setVisibility(View.VISIBLE);
+
 
             //test camera
             getFragmentManager().beginTransaction()
@@ -323,10 +319,12 @@ public class MainActivity extends AppCompatActivity implements
             // change camera button
             cameraButton.setBackground(cameraOff);
 
-
+            // hide headphones
+            headphones.setVisibility(View.INVISIBLE);
         }
         else {
             cameraPreview.setVisibility(View.INVISIBLE);
+
 
             // remove camera2VideoFragment
             Fragment fragment = getSupportFragmentManager().findFragmentByTag("cameraFragment");
@@ -335,6 +333,9 @@ public class MainActivity extends AppCompatActivity implements
 
             // change camera button
             cameraButton.setBackground(cameraOn);
+
+            // show headphones
+            headphones.setVisibility(View.VISIBLE);
         }
     }
 
@@ -366,9 +367,9 @@ public class MainActivity extends AppCompatActivity implements
 
             // set lyric Pool
             lyricPool = loaded_JSON.get(0);
-            Log.i("remove1", lyricPool.get(0));
+     //       Log.i("remove1", lyricPool.get(0));
             loaded_JSON.remove(0);
-            Log.i("remove2", lyricPool.get(0));
+     //       Log.i("remove2", lyricPool.get(0));
 /*
             // update rootButton
             rootButton.setText(currentRoot);
@@ -428,7 +429,7 @@ public class MainActivity extends AppCompatActivity implements
             pressRoot(rootButton);
         } else {
             lyricIndex = 0;
-            Log.i("pool-size", "" + lyricPool.size());
+         //   Log.i("pool-size", "" + lyricPool.size());
             if (lyricPool.size() < 3) {
                 pressRoot((Button) findViewById(R.id.rootButton));
             } else {
@@ -576,28 +577,28 @@ public class MainActivity extends AppCompatActivity implements
     // remove Repeats
     public JSONArray clearRepeats(JSONArray sortedArr, JSONObject rootObject) {
         JSONArray oneSyl = getSingleSyllables(sortedArr);
-        Log.i("Length", "" + oneSyl.length());
+   //     Log.i("Length", "" + oneSyl.length());
         // append route to oneSyl array to be compared
 
         oneSyl.put(rootObject);
-        Log.i("length", oneSyl.length() + "");
+  //      Log.i("length", oneSyl.length() + "");
 
         for (int i = oneSyl.length(); i < sortedArr.length(); i++) {
             try {
-                Log.i("More syllables",i + ": " + sortedArr.getJSONObject(i).get("word").toString());
+   //             Log.i("More syllables",i + ": " + sortedArr.getJSONObject(i).get("word").toString());
                 JSONObject jObj = sortedArr.getJSONObject(i);
                 boolean contains = false;
                 // compare to single syllable words
                 int j = 0;
                 while (!contains) {
                     String oneSyllWord = oneSyl.getJSONObject(j).get("word").toString();
-                    Log.i("checker", oneSyllWord);
+     //               Log.i("checker", oneSyllWord);
                     // compare to each 1 syllable word
                     if (jObj.get("word").toString().contains(oneSyllWord) && oneSyllWord.length() > 3) {
                         contains = true;
 
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                            Log.i("Contains", jObj.get("word").toString() + " Contains " + oneSyllWord);
+          //                  Log.i("Contains", jObj.get("word").toString() + " Contains " + oneSyllWord);
                             sortedArr.remove(i);
                             i--;
                         }
@@ -634,61 +635,6 @@ public class MainActivity extends AppCompatActivity implements
         return oneSyl;
     }
 
-
-    // Spotify player
-    @Override
-    protected void onDestroy() {
-        Spotify.destroyPlayer(this);
-        super.onDestroy();
-    }
-
-    @Override
-    public void onPlaybackEvent(PlayerEvent playerEvent) {
-        Log.d("MainActivity", "Playback event received: " + playerEvent.name());
-        switch (playerEvent) {
-            // Handle event type as necessary
-            default:
-                break;
-        }
-    }
-
-    @Override
-    public void onPlaybackError(Error error) {
-        Log.d("MainActivity", "Playback error received: " + error.name());
-        switch (error) {
-            // Handle error type as necessary
-            default:
-                break;
-        }
-    }
-
-    @Override
-    public void onLoggedIn() {
-        Log.d("MainActivity", "User logged in");
-
-        mPlayer.playUri(null, "spotify:track:5J2n4gbJVuM9YAySuGXh8a", 0, 0);
-
-    }
-
-    @Override
-    public void onLoggedOut() {
-        Log.d("MainActivity", "User logged out");
-    }
-
-    @Override
-    public void onLoginFailed(Error var1) {
-        Log.d("MainActivity", "Login failed");
-    }
-
-    @Override
-    public void onTemporaryError() {
-        Log.d("MainActivity", "Temporary error occurred");
-    }
-
-    @Override
-    public void onConnectionMessage(String message) {
-        Log.d("MainActivity", "Received connection message: " + message);
-    }
 
     @Override
     public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer, boolean wasRestored) {

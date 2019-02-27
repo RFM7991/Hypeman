@@ -829,8 +829,6 @@ public class Camera2VideoFragment extends Fragment
    //     openCamera (mTextureView.getWidth(), mTextureView.getHeight());
    // }
 
-
-
     /**
      * Compares two {@code Size}s based on their areas.
      */
