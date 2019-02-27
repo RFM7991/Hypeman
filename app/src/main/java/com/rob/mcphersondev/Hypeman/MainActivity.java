@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.ExecutionException;
 
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -307,7 +308,7 @@ public class MainActivity extends AppCompatActivity implements
         Button recordButton = (Button) findViewById(R.id.video);
         Drawable cameraOn = getResources().getDrawable(R.drawable.ic_camera_on);
         Drawable cameraOff = getResources().getDrawable(R.drawable.ic_camera_off);
-
+        ImageView headphones = (ImageView) findViewById(R.id.headphones);
 
 
         Log.e("CameraPreview"," "+ cameraPreview.getVisibility());
@@ -323,6 +324,8 @@ public class MainActivity extends AppCompatActivity implements
             // change camera button
             cameraButton.setBackground(cameraOff);
 
+            // hide headphones
+            headphones.setVisibility(View.INVISIBLE);
 
         }
         else {
@@ -335,6 +338,9 @@ public class MainActivity extends AppCompatActivity implements
 
             // change camera button
             cameraButton.setBackground(cameraOn);
+
+            // show headphones
+            headphones.setVisibility(View.VISIBLE);
         }
     }
 

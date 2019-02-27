@@ -24,6 +24,7 @@ import android.app.DialogFragment;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Matrix;
@@ -789,6 +790,16 @@ public class Camera2VideoFragment extends Fragment
                 Toast.makeText(activity, "Video saved: " + mNextVideoAbsolutePath,
                         Toast.LENGTH_SHORT).show();
                 Log.d(TAG, "Video saved: " + mNextVideoAbsolutePath);
+
+                Intent sendIntent = new Intent();
+                sendIntent.setAction(Intent.ACTION_SEND);
+                sendIntent.setType("video/mp4");
+                File vid = new File(mNextVideoAbsolutePath);
+                Uri uri = Uri.fromFile(vid);
+                sendIntent.putExtra(Intent.EXTRA_STREAM, uri);
+       //         this.onPause();
+                startActivity(Intent.createChooser(sendIntent, "Share video"));
+        //        this.onResume();
             }
         } catch (RuntimeException e) {
             new File(mNextVideoAbsolutePath).delete();
@@ -828,8 +839,6 @@ public class Camera2VideoFragment extends Fragment
   //      closeCamera();
    //     openCamera (mTextureView.getWidth(), mTextureView.getHeight());
    // }
-
-
 
     /**
      * Compares two {@code Size}s based on their areas.

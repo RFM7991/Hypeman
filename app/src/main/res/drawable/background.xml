@@ -10,12 +10,11 @@
                 android:endColor="@color/cardview_dark_background"/>
         </shape>
     </item>
-    <item>
 
-        <bitmap
-            android:gravity="center"
-            android:src="@mipmap/logo_round">
-        </bitmap>
-    </item>
-
+    <item
+        android:drawable="@drawable/hypeman_logo_white"
+        android:gravity="center"
+        android:width="333dp"
+        android:height="280dp"
+        />
 </layer-list>
