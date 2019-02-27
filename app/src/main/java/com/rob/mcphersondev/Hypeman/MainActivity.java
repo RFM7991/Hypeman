@@ -42,6 +42,8 @@ import android.util.Size;
 
 public class MainActivity extends AppCompatActivity implements YouTubePlayer.OnInitializedListener {
 
+    // hello test more comments yeah
+    
     private static final String CLIENT_ID = "e20e5b14c264467281e102378cf45708";
     private static final String REDIRECT_URI = "https://msuweb.montclair.edu/~mcphersonr1/callback";
     private static final int RECOVERY_DIALOG_REQUEST = 1;
