@@ -13,12 +13,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="invisible"
+        android:background="@color/browser_actions_bg_grey"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"></RelativeLayout>
+        app:layout_constraintVertical_bias="0.0">
+    </RelativeLayout>
 
     <TextView
         android:id="@+id/nextRoot"
@@ -39,12 +41,14 @@
 
     <ImageView
         android:id="@+id/headphones"
+        android:scaleX="0.5"
+        android:scaleY="0.5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="@id/guideline8"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/guideline15"
+        app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/hypeman_logo_headphones"
         android:alpha="0.4"/>
 
@@ -64,20 +68,31 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
+        android:id="@+id/gallery_button"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_gravity="left"
+        android:background="@drawable/ic_library"
+        app:layout_constraintBottom_toTopOf="@+id/guideline14"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/guideline2"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
         android:id="@+id/info"
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:layout_gravity="left"
         android:layout_marginBottom="8dp"
-
+        android:onClick="pressInfo"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:background="@drawable/ic_info"
-        android:onClick="pressInfo"
-        app:layout_constraintBottom_toTopOf="@+id/guideline14"
+        app:layout_constraintTop_toTopOf="@+id/guideline9"
+        app:layout_constraintBottom_toTopOf="@+id/guideline15"
         app:layout_constraintEnd_toStartOf="@+id/guideline11"
         app:layout_constraintStart_toStartOf="@+id/guideline2"
-        app:layout_constraintTop_toTopOf="parent"/>
+        />
 
 
     <Button
@@ -174,18 +189,6 @@
         app:layout_constraintTop_toBottomOf="@+id/rootButton"
         app:layout_constraintWidth_default="percent"
         app:layout_constraintWidth_percent=".18" />
-
-    <ImageView
-        android:id="@+id/headphones"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/hypeman_logo_headphones" />
-
-
 
 
     <android.support.constraint.Group

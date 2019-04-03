@@ -39,6 +39,7 @@ import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.params.StreamConfigurationMap;
+import android.media.AudioManager;
 import android.media.MediaRecorder;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
@@ -53,11 +54,13 @@ import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.util.Size;
 import android.util.SparseIntArray;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -125,6 +128,8 @@ public class Camera2VideoFragment extends Fragment
      * preview.
      */
     private CameraCaptureSession mPreviewSession;
+
+    private  AudioManager mAudioManager;
 
     /**
      * {@link TextureView.SurfaceTextureListener} handles several lifecycle events on a
@@ -232,19 +237,24 @@ public class Camera2VideoFragment extends Fragment
             }
 
         }
-
-
     };
     private Integer mSensorOrientation;
     private String mNextVideoAbsolutePath;
     private File nextVideoFile;
     private CaptureRequest.Builder mPreviewBuilder;
+    private int currentVolume;
 
     public static Camera2VideoFragment newInstance() {
         return new Camera2VideoFragment();
     }
 
+/*
+    03-27 18:12:25.906 8450-8450/com.mcphersondev.Hypeman D/RFMCamera: map sizes= 1280x960
+03-27 18:12:25.906 8450-8450/com.mcphersondev.Hypeman D/RFMCamera: map sizes= 1280x720
+03-27 18:12:25.906 8450-8450/com.mcphersondev.Hypeman D/RFMCamera: map sizes= 1024x768
+03-27 18:12:25.906 8450-8450/com.mcphersondev.Hypeman D/RFMCamera: vid size= 1024x768
 
+ */
     /**
      * In this sample, we choose a video size with 3x4 aspect ratio. Also, we don't use sizes
      * larger than 1080p, since MediaRecorder cannot handle such a high-resolution video.
@@ -254,7 +264,11 @@ public class Camera2VideoFragment extends Fragment
      */
     private static Size chooseVideoSize(Size[] choices) {
         for (Size size : choices) {
-            if (size.getWidth() == size.getHeight() * 4 / 3 && size.getWidth() <= 1080) {
+            Log.d("RFMCamera","map sizes= " + size);
+            if (size.getWidth() == size.getHeight() * 4 / 3 && size.getWidth() <= 1080
+            || size.getWidth() == size.getHeight() * 16 / 9 && size.getWidth() <= 1080
+            || size.getWidth() == size.getHeight() * 16 / 9 && size.getWidth() <= 1080) {
+                Log.d("RFMCamera","vid size= " + size);
                 return size;
             }
         }
@@ -305,6 +319,9 @@ public class Camera2VideoFragment extends Fragment
         mTextureView = (AutoFitTextureView) view.findViewById(R.id.texture);
         mButtonVideo = (Button) view.findViewById(R.id.video);
         mButtonVideo.setOnClickListener(this);
+        mAudioManager = (AudioManager) getActivity().getSystemService(Context.AUDIO_SERVICE);
+
+
         //    view.findViewById(R.id.info).setOnClickListener(this);
     }
 
@@ -467,9 +484,14 @@ public class Camera2VideoFragment extends Fragment
             if (map == null) {
                 throw new RuntimeException("Cannot get available preview/video sizes");
             }
+            Log.d("RFMCamera", getSreenSize() + "");
+
+            Size s = new Size(getActivity().findViewById(R.id.container2).getHeight(),  getActivity().findViewById(R.id.container2).getWidth());
+        //    mVideoSize = s;
             mVideoSize = chooseVideoSize(map.getOutputSizes(MediaRecorder.class));
-            mPreviewSize = chooseOptimalSize(map.getOutputSizes(SurfaceTexture.class),
-                    width, height, mVideoSize);
+            mPreviewSize = s;
+       //     mPreviewSize = chooseOptimalSize(map.getOutputSizes(SurfaceTexture.class),
+        //            width, height, mVideoSize);
 
             int orientation = getResources().getConfiguration().orientation;
             if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
@@ -726,6 +748,16 @@ public class Camera2VideoFragment extends Fragment
             surfaces.add(recorderSurface);
             mPreviewBuilder.addTarget(recorderSurface);
 
+            //To decrease media player volume
+            if (!mAudioManager.isWiredHeadsetOn() && ! mAudioManager.isBluetoothA2dpOn() && ! mAudioManager.isBluetoothScoOn()) {
+                currentVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+                int maxVolume = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+                float percent = 0.3f;
+                int recordingVolume = (int) (maxVolume * percent);
+                mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+                mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, recordingVolume, AudioManager.FLAG_SHOW_UI);
+            }
+
             // Start a capture session
             // Once the session starts, we can update the UI and start recording
             mCameraDevice.createCaptureSession(surfaces, new CameraCaptureSession.StateCallback() {
@@ -791,6 +823,7 @@ public class Camera2VideoFragment extends Fragment
                         Toast.LENGTH_SHORT).show();
                 Log.d(TAG, "Video saved: " + mNextVideoAbsolutePath);
 
+                // launch share video intent
                 Intent sendIntent = new Intent();
                 sendIntent.setAction(Intent.ACTION_SEND);
                 sendIntent.setType("video/mp4");
@@ -808,6 +841,11 @@ public class Camera2VideoFragment extends Fragment
                     Toast.LENGTH_SHORT).show();
             Log.d(TAG, "No valid audio/video data: " + mNextVideoAbsolutePath);
         }
+
+        // increase volume to previous
+        if (!mAudioManager.isWiredHeadsetOn() && ! mAudioManager.isBluetoothA2dpOn() && ! mAudioManager.isBluetoothScoOn())
+        mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, currentVolume, AudioManager.FLAG_SHOW_UI);
+        // reset and prepare media recorder
         mMediaRecorder.reset();
         mNextVideoAbsolutePath = null;
         startPreview();
@@ -906,6 +944,20 @@ public class Camera2VideoFragment extends Fragment
                     .create();
         }
 
+    }
+
+    public android.graphics.Point getSreenSize() {
+        //     Log.i("RFM", "context " + this.getBaseContext());
+
+        WindowManager wm = (WindowManager) getActivity().getBaseContext().getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+        android.graphics.Point size = new android.graphics.Point();
+        display.getSize(size);
+        int width = size.x;
+        int height = size.y;
+
+        //    Log.i("RFM", "width= "  + width + "height= " + height);
+        return new android.graphics.Point(width, height);
     }
 
 

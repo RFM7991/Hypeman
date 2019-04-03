@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.SparseIntArray;
+import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
@@ -55,9 +56,11 @@ public class MainActivity extends AppCompatActivity implements YouTubePlayer.OnI
     public ArrayList<String> lyricPool = new ArrayList<String>();
     public ArrayList<String> api_Lyrics = new ArrayList<String>();
     public ArrayList<Root> rootPool = new ArrayList<Root>();
+    private boolean isRunning;
     public int lyricIndex = 0;
     public int rootsLoaded = 0;
     private final String ROOTS_URL = "https://api.jsonbin.io/b/5c40ab4a7b31f426f85b4cb1";
+    private Button galleryButton;
 
    // public ArrayList<Root> rootArr;
     public ArrayList<Root> rootArr = new ArrayList<>();
@@ -105,36 +108,18 @@ public class MainActivity extends AppCompatActivity implements YouTubePlayer.OnI
         setContentView(R.layout.activity_main);
         savedState = savedInstanceState;
 
-
-/*
-        AuthenticationRequest.Builder builder = new AuthenticationRequest.Builder(CLIENT_ID, AuthenticationResponse.Type.TOKEN, REDIRECT_URI);
-        builder.setScopes(new String[]{"user-read-private", "streaming"});
-        AuthenticationRequest request = builder.build();
-
-        AuthenticationClient.openLoginActivity(this, REQUEST_CODE, request);
-        Log.i("Mark", "Test1");
-       // Log.i("INFO", roots[0]);
-*/
         // get Roots from JSON
         try {
             initCAPI("test", ROOTS_URL);
         } catch (JSONException e) {
             e.printStackTrace();
         }
-    /*    JSONRootRetriever jsonRoots = new JSONRootRetriever(ROOTS_URL);
-        try {
-            rootArr = jsonRoots.getRoots();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-*/
         // populate rootPool
         for (int i = 0; i < rootArr.size(); i++) {
             rootPool.add(rootArr.get(i));
         }
         rootPool = shuffleRoots(rootPool);
         loadLyrics(10);
-        //    loadLyrics(rootPool.size());
 
         // Youtube
         YouTubePlayerFragment youTubePlayerFragment = (YouTubePlayerFragment) getFragmentManager().findFragmentById(R.id.youtubeplayerfragment);
@@ -156,6 +141,24 @@ public class MainActivity extends AppCompatActivity implements YouTubePlayer.OnI
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
+        // gallery button
+        galleryButton = findViewById(R.id.gallery_button);
+        galleryButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    galleryButton.setAlpha((float) 0.5);
+                }
+                else if (event.getAction() == MotionEvent.ACTION_UP) {
+                    galleryButton.setAlpha((float) 1.0);
+                    launchGallery();
+                }
+                return false;
+            }
+        });
+
+        ping();
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -164,7 +167,7 @@ public class MainActivity extends AppCompatActivity implements YouTubePlayer.OnI
 
     protected void onPause() {
         super.onPause();
-        Log.e("onPause", "paused");
+        isRunning = false;
 
     //    if (cameraFragment != null) {
      //       cameraFragment.onPause();
@@ -173,45 +176,49 @@ public class MainActivity extends AppCompatActivity implements YouTubePlayer.OnI
     }
     //on resume
     protected void onResume() {
-        for (int i = 0; i < rootPool.size(); i++) {
-      //      Log.i("all-roots", i + ": " + rootPool.get(i).root);
-        }
         super.onResume();
-      //  Log.i("static",  "" + rootsLoaded);
+        isRunning = true;
+
+    }
+
+    public void ping() {
 
         new Thread(new Runnable() {
             @Override
             public void run() {
-                while(true){
+                while(true) {
+                    if (isRunning) {
+                        try {
+                            Thread.sleep(100);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        if (rootPool.size() <= 15) {
+                            ArrayList<Root> rootReload = new ArrayList<Root>();
+                            for (int i = 0; i < rootArr.size(); i++) {
+                                if (!rootPool.contains(rootArr.get(i)))
+                                    rootReload.add(rootArr.get(i));
+                            }
+                            rootReload = shuffleRoots(rootReload);
+
+                            for (int i = 0; i < rootReload.size(); i++) {
+                                rootPool.add(rootReload.get(i));
+                            }
+                        }
+
+                        if (loaded_JSON.size() < 15 && loaded_JSON.size() != JSONArr.length()) {
+                            loadLyrics(1);
+                        }
+                    }
+                    // delay 5 seconds
                     try {
-                        Thread.sleep(100);
+                        Thread.sleep(50);
                     } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    //      Log.i("static", "loaded_JSON.size: " + loaded_JSON.size());
-              //      Log.i("static", "rootPool.size: " + rootPool.size());
-                    if (rootPool.size() <= 15) {
-                        ArrayList<Root> rootReload = new ArrayList<Root>();
-                        for (int i = 0; i < rootArr.size(); i++) {
-                            if (!rootPool.contains(rootArr.get(i)))
-                                rootReload.add(rootArr.get(i));
-                        }
-                        rootReload = shuffleRoots(rootReload);
-
-                        for (int i = 0; i < rootReload.size(); i++) {
-                            rootPool.add(rootReload.get(i));
-                        }
-                    }
-
-                    if (loaded_JSON.size() < 15 && loaded_JSON.size() != JSONArr.length()) {
-                  //      Log.i("static", "subload");
-                        loadLyrics(1);
+                        break;
                     }
                 }
             }
         }).start();
-
-    //    Log.e(TAG, "onResume");
     }
 
     // call API, update Lyric Pool Array
@@ -302,13 +309,6 @@ public class MainActivity extends AppCompatActivity implements YouTubePlayer.OnI
         Drawable cameraOn = getResources().getDrawable(R.drawable.ic_camera_on);
         Drawable cameraOff = getResources().getDrawable(R.drawable.ic_camera_off);
         ImageView headphones = (ImageView) findViewById(R.id.headphones);
-<<<<<<< HEAD
-=======
-
-
-
->>>>>>> e685a9b2fcf93f1d7ca37685287e0603a37ea88b
-
 
     //    Log.e("CameraPreview"," "+ cameraPreview.getVisibility());
         // camera
@@ -326,10 +326,6 @@ public class MainActivity extends AppCompatActivity implements YouTubePlayer.OnI
 
             // hide headphones
             headphones.setVisibility(View.INVISIBLE);
-<<<<<<< HEAD
-
-=======
->>>>>>> e685a9b2fcf93f1d7ca37685287e0603a37ea88b
         }
         else {
             cameraPreview.setVisibility(View.INVISIBLE);
@@ -347,6 +343,7 @@ public class MainActivity extends AppCompatActivity implements YouTubePlayer.OnI
             headphones.setVisibility(View.VISIBLE);
         }
     }
+
 
     /** Called when the user taps the Root button */
     public void pressRoot(View view) throws IOException, JSONException {
@@ -683,5 +680,12 @@ public class MainActivity extends AppCompatActivity implements YouTubePlayer.OnI
         //    Log.i("compare", "Root: " + rootPool.get(0).root);
         //    Log.i("compare", "loaded: " + loaded_JSON.get(0).get(0));
     }
+
+
+    public void launchGallery() {
+        Intent intent = new Intent(this, VideoGalleryActivity.class);
+        startActivity(intent);
+    }
+
 
 }

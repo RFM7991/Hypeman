@@ -18,4 +18,6 @@
     <string name="start">Start</string>
     <string name="test">test</string>
     <string name="Camera">Camera</string>
+    <string name="Videos">Videos</string>
+    <!-- TODO: Remove or change this placeholder text -->
 </resources>
