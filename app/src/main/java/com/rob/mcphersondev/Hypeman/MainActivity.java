@@ -97,6 +97,8 @@ public class MainActivity extends AppCompatActivity implements YouTubePlayer.OnI
 
     private Camera2VideoFragment cameraFragment;
 
+    private Button infoButton;
+
     private Bundle savedState;
     ///////////////////////
 
@@ -158,6 +160,21 @@ public class MainActivity extends AppCompatActivity implements YouTubePlayer.OnI
             }
         });
 
+        // info button
+        infoButton = findViewById(R.id.info_button);
+        infoButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    infoButton.setAlpha((float) 0.5);
+                }
+                else if (event.getAction() == MotionEvent.ACTION_UP) {
+                    infoButton.setAlpha((float) 1.0);
+                    showInfo();
+                }
+                return false;
+            }
+        });
         ping();
     }
 
@@ -294,7 +311,7 @@ public class MainActivity extends AppCompatActivity implements YouTubePlayer.OnI
         }
     }
 
-    public void pressInfo(View view) throws IOException {
+    public void showInfo()  {
         // Intro Alert Message
         new AlertDialog.Builder(this)
                 .setMessage(R.string.intro_message)

@@ -265,9 +265,7 @@ public class Camera2VideoFragment extends Fragment
     private static Size chooseVideoSize(Size[] choices) {
         for (Size size : choices) {
             Log.d("RFMCamera","map sizes= " + size);
-            if (size.getWidth() == size.getHeight() * 4 / 3 && size.getWidth() <= 1080
-            || size.getWidth() == size.getHeight() * 16 / 9 && size.getWidth() <= 1080
-            || size.getWidth() == size.getHeight() * 16 / 9 && size.getWidth() <= 1080) {
+            if (size.getWidth() == size.getHeight() * 4 / 3 && size.getWidth() <= 1080) {
                 Log.d("RFMCamera","vid size= " + size);
                 return size;
             }
@@ -646,30 +644,7 @@ public class Camera2VideoFragment extends Fragment
         mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.SURFACE);
         mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
 
-        ///////////////////////////////////////////////////////////////////
-        /*
-           File mediaStorageDir = new File(Environment.getExternalStorageDirectory(), "/Pictures/Hypeman");
 
-        if (!mediaStorageDir.exists()) {
-            if (!mediaStorageDir.mkdirs()) {
-                Log.d("Camera", "failed to create directory");
-            }
-        }
-
-        if (mediaStorageDir.exists()) {
-            Log.d("Camera", "directory exists");
-        }
-
-      //  int pictureIndex = mediaStorageDir.list().length + 1;
-        if (mNextVideoAbsolutePath == null || mNextVideoAbsolutePath.isEmpty()) {
-            //    mNextVideoAbsolutePath = getVideoFilePath(getActivity());
-            mNextVideoAbsolutePath =  Environment.getExternalStorageDirectory().getAbsolutePath()+"/Pictures/Hypeman/vid" + ".mp4";
-            Log.d("camera", "nextVId path was empty");
-        }
-
-     */
-        ////////////////////////////////////////////////////////
-// test
 
         if (mNextVideoAbsolutePath == null || mNextVideoAbsolutePath.isEmpty()) {
             mNextVideoAbsolutePath = getVideoFilePath(getActivity());
@@ -678,10 +653,7 @@ public class Camera2VideoFragment extends Fragment
        //     mNextVideoAbsolutePath = getVideoFilePath2();
         }
 
-        ///////////////////////////////////////////
 
-
-         //   mNextVideoAbsolutePath = getVideoFilePath(getActivity());
 
         mMediaRecorder.setOutputFile(mNextVideoAbsolutePath);
         mMediaRecorder.setVideoEncodingBitRate(10000000);
@@ -754,8 +726,9 @@ public class Camera2VideoFragment extends Fragment
                 int maxVolume = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
                 float percent = 0.3f;
                 int recordingVolume = (int) (maxVolume * percent);
-                mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
-                mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, recordingVolume, AudioManager.FLAG_SHOW_UI);
+                Log.d("vol", "rec" + recordingVolume + ", cur" + currentVolume );
+                if (mAudioManager.getStreamVolume(AudioManager.STREAM_SYSTEM) > recordingVolume)
+                  mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, recordingVolume, AudioManager.FLAG_SHOW_UI);
             }
 
             // Start a capture session

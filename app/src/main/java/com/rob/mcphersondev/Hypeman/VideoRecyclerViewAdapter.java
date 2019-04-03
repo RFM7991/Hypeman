@@ -227,24 +227,30 @@ public class VideoRecyclerViewAdapter extends RecyclerView.Adapter<VideoRecycler
         // set video time
         MediaMetadataRetriever retriever = new MediaMetadataRetriever();
         //use one of overloaded setDataSource() functions to set your data source
-        retriever.setDataSource(activity, Uri.fromFile(new File(p)));
-        String time = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
-        long timeInMillisec = Long.parseLong(time);
-        retriever.release();
+        File f = new File(p);
+        if (!p.isEmpty()) {
+            retriever.setDataSource(activity, Uri.fromFile(new File(p)));
+            String time = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
+            long timeInMillisec = Long.parseLong(time);
+            retriever.release();
 
-        // convert to minutes and seconds
-        long totSec = timeInMillisec / 1000;
-        String min = "" + totSec / 60;
-        String sec = "" +  totSec % 60;
+            // convert to minutes and seconds
+            long totSec = timeInMillisec / 1000;
+            String min = "" + totSec / 60;
+            String sec = "" + totSec % 60;
 
-        // format seconds
-        if (sec.length() < 2) {
-            sec = "0" + sec;
+            // format seconds
+            if (sec.length() < 2) {
+                sec = "0" + sec;
+            }
+
+            String ts = min + ":" + sec;
+
+            return ts;
         }
-
-        String ts = min+ ":" + sec;
-
-        return ts;
+        else {
+            return "";
+        }
     }
 
 }
