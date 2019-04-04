@@ -665,6 +665,7 @@ public class MainActivity extends AppCompatActivity implements YouTubePlayer.OnI
             youTubePlayer.setPlayerStyle(YouTubePlayer.PlayerStyle.DEFAULT);
             youTubePlayer.cuePlaylist("PL6eBorfLzavmm5QkhSC4yF6HXNufPGKBC");
 
+
             youTubePlayer.setShowFullscreenButton(false);
         }
     }

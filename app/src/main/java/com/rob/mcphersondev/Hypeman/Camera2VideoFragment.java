@@ -265,7 +265,8 @@ public class Camera2VideoFragment extends Fragment
     private static Size chooseVideoSize(Size[] choices) {
         for (Size size : choices) {
             Log.d("RFMCamera","map sizes= " + size);
-            if (size.getWidth() == size.getHeight() * 4 / 3 && size.getWidth() <= 1080) {
+      //      if (size.getWidth() == size.getHeight() * 4 / 3 && size.getWidth() <= 1080) {
+            if (size.getWidth() == size.getHeight() * 16 / 9 && size.getHeight() <= 1080) {
                 Log.d("RFMCamera","vid size= " + size);
                 return size;
             }
@@ -291,8 +292,8 @@ public class Camera2VideoFragment extends Fragment
         int w = aspectRatio.getWidth();
         int h = aspectRatio.getHeight();
         for (Size option : choices) {
-            if (option.getHeight() == option.getWidth() * h / w &&
-                    option.getWidth() >= width && option.getHeight() >= height) {
+       //    if (option.getHeight() == option.getWidth() * h / w && option.getWidth() >= width && option.getHeight() >= height) {
+            if (option.getHeight() == option.getWidth() * h / w && option.getWidth() <= width && option.getHeight() <= height) {
                 bigEnough.add(option);
             }
         }
@@ -487,9 +488,9 @@ public class Camera2VideoFragment extends Fragment
             Size s = new Size(getActivity().findViewById(R.id.container2).getHeight(),  getActivity().findViewById(R.id.container2).getWidth());
         //    mVideoSize = s;
             mVideoSize = chooseVideoSize(map.getOutputSizes(MediaRecorder.class));
-            mPreviewSize = s;
-       //     mPreviewSize = chooseOptimalSize(map.getOutputSizes(SurfaceTexture.class),
-        //            width, height, mVideoSize);
+        //    mPreviewSize = s;
+            mPreviewSize = chooseOptimalSize(map.getOutputSizes(SurfaceTexture.class),
+                    width, height, mVideoSize);
 
             int orientation = getResources().getConfiguration().orientation;
             if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
