@@ -40,16 +40,16 @@
 
     <ImageView
         android:id="@+id/headphones"
+        android:layout_width="wrap_content"
+        android:layout_height="728dp"
+        android:alpha="0.4"
         android:scaleX="0.5"
         android:scaleY="0.5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="@id/guideline8"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/hypeman_logo_headphones"
-        android:alpha="0.4"/>
+        app:srcCompat="@drawable/hypeman_logo_headphones" />
 
     <Button
         android:id="@+id/video_switch"
@@ -174,13 +174,15 @@
         android:id="@+id/centerButton"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
         android:alpha="0.7"
+        android:background="@drawable/border_radius"
         android:onClick="pressLyric"
         android:text="@string/More"
         android:textColor="@drawable/button_text_color"
-        android:background="@drawable/border_radius"
         app:layout_constraintBottom_toTopOf="@+id/lyricButton"
-        app:layout_constraintEnd_toStartOf="@+id/guideline10"
+        app:layout_constraintEnd_toStartOf="@+id/nextLyric"
         app:layout_constraintHeight_default="percent"
         app:layout_constraintHeight_percent=".1"
         app:layout_constraintStart_toEndOf="@+id/lastLyric"
@@ -213,7 +215,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.46" />
+        app:layout_constraintGuide_percent="0.45" />
 
     <android.support.constraint.Guideline
         android:id="@+id/guideline4"
@@ -293,6 +295,7 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.80" />
 
+    <!--
     <fragment
         android:id="@+id/youtubeplayerfragment"
         android:name="com.google.android.youtube.player.YouTubePlayerFragment"
@@ -306,6 +309,7 @@
         app:layout_constraintTop_toTopOf="@+id/guideline15"
         app:layout_constraintWidth_default="percent"
         app:layout_constraintWidth_percent="1" />
+        -->
 
 
 

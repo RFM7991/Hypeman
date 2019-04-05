@@ -265,8 +265,8 @@ public class Camera2VideoFragment extends Fragment
     private static Size chooseVideoSize(Size[] choices) {
         for (Size size : choices) {
             Log.d("RFMCamera","map sizes= " + size);
-      //      if (size.getWidth() == size.getHeight() * 4 / 3 && size.getWidth() <= 1080) {
-            if (size.getWidth() == size.getHeight() * 16 / 9 && size.getHeight() <= 1080) {
+           if (size.getWidth() == size.getHeight() * 4 / 3 && size.getWidth() <= 1080) {
+       //     if (size.getWidth() == size.getHeight() * 16 / 9 && size.getHeight() <= 1080) {
                 Log.d("RFMCamera","vid size= " + size);
                 return size;
             }
@@ -292,8 +292,9 @@ public class Camera2VideoFragment extends Fragment
         int w = aspectRatio.getWidth();
         int h = aspectRatio.getHeight();
         for (Size option : choices) {
-       //    if (option.getHeight() == option.getWidth() * h / w && option.getWidth() >= width && option.getHeight() >= height) {
-            if (option.getHeight() == option.getWidth() * h / w && option.getWidth() <= width && option.getHeight() <= height) {
+            Log.d("RFMCamera", "optimal sizes" + option);
+           if (option.getHeight() == option.getWidth() * h / w && option.getWidth() >= width && option.getHeight() >= height) {
+       //     if (option.getHeight() == option.getWidth() * h / w && option.getWidth() <= width && option.getHeight() <= height) {
                 bigEnough.add(option);
             }
         }
@@ -302,7 +303,7 @@ public class Camera2VideoFragment extends Fragment
         if (bigEnough.size() > 0) {
             return Collections.min(bigEnough, new CompareSizesByArea());
         } else {
-            Log.e(TAG, "Couldn't find any suitable preview size");
+            Log.e("RFMCamera", "Couldn't find any suitable preview size");
             return choices[0];
         }
     }
@@ -494,8 +495,10 @@ public class Camera2VideoFragment extends Fragment
 
             int orientation = getResources().getConfiguration().orientation;
             if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                Log.d("RFMCamera", "landscape");
                 mTextureView.setAspectRatio(mPreviewSize.getWidth(), mPreviewSize.getHeight());
             } else {
+                Log.d("RFMCamera", "portrait");
                 mTextureView.setAspectRatio(mPreviewSize.getHeight(), mPreviewSize.getWidth());
             }
             configureTransform(width, height);
@@ -796,16 +799,8 @@ public class Camera2VideoFragment extends Fragment
                 Toast.makeText(activity, "Video saved: " + mNextVideoAbsolutePath,
                         Toast.LENGTH_SHORT).show();
                 Log.d(TAG, "Video saved: " + mNextVideoAbsolutePath);
+                launchShare(mNextVideoAbsolutePath);
 
-                // launch share video intent
-                Intent sendIntent = new Intent();
-                sendIntent.setAction(Intent.ACTION_SEND);
-                sendIntent.setType("video/mp4");
-                File vid = new File(mNextVideoAbsolutePath);
-                Uri uri = Uri.fromFile(vid);
-                sendIntent.putExtra(Intent.EXTRA_STREAM, uri);
-       //         this.onPause();
-                startActivity(Intent.createChooser(sendIntent, "Share video"));
         //        this.onResume();
             }
         } catch (RuntimeException e) {
@@ -825,6 +820,20 @@ public class Camera2VideoFragment extends Fragment
         startPreview();
         mRecordingLock.release();
     }
+
+    public void launchShare(String p) {
+
+        // launch share video intent
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.setType("video/mp4");
+        File vid = new File(p);
+        Uri uri = Uri.fromFile(vid);
+        sendIntent.putExtra(Intent.EXTRA_STREAM, uri);
+        // this.onPause();
+        startActivity(Intent.createChooser(sendIntent, "Share video"));
+    }
+
 /*
     public void stopRecordingVideo()
     {

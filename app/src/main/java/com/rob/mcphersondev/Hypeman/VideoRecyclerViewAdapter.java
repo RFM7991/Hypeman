@@ -10,6 +10,7 @@ import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -33,6 +34,7 @@ public class VideoRecyclerViewAdapter extends RecyclerView.Adapter<VideoRecycler
     Activity activity;
     private ImageView videoView;
     private Button playButton;
+    public  String PACKAGE_NAME;
 
     public  class CustomViewHolder extends RecyclerView.ViewHolder {
 
@@ -125,6 +127,9 @@ public class VideoRecyclerViewAdapter extends RecyclerView.Adapter<VideoRecycler
     public VideoRecyclerViewAdapter.CustomViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.video_card, parent, false);
         CustomViewHolder vh = new CustomViewHolder(v);
+
+        // package name
+        PACKAGE_NAME = activity.getApplicationContext().getPackageName();
         return vh;
     }
 
@@ -165,7 +170,16 @@ public class VideoRecyclerViewAdapter extends RecyclerView.Adapter<VideoRecycler
     public void launchVideoViewer(String p) {
         File f = new File(p);
         Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setDataAndType(Uri.fromFile(f), "video/*");
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        // < v24
+     //   intent.setDataAndType(Uri.fromFile(f), "video/*");
+
+        Uri apkURI = FileProvider.getUriForFile(
+                activity,
+                PACKAGE_NAME + ".provider", f);
+        intent.setDataAndType(apkURI, "video/*");
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
         activity.startActivity(intent);
     }
 

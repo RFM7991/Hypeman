@@ -124,8 +124,8 @@ public class MainActivity extends AppCompatActivity implements YouTubePlayer.OnI
         loadLyrics(10);
 
         // Youtube
-        YouTubePlayerFragment youTubePlayerFragment = (YouTubePlayerFragment) getFragmentManager().findFragmentById(R.id.youtubeplayerfragment);
-       youTubePlayerFragment.initialize("AIzaSyBVSgb0m8KxkiAwdFm0YWdsqi5VnC8fh20",this);
+    //    YouTubePlayerFragment youTubePlayerFragment = (YouTubePlayerFragment) getFragmentManager().findFragmentById(R.id.youtubeplayerfragment);
+    //   youTubePlayerFragment.initialize("AIzaSyBVSgb0m8KxkiAwdFm0YWdsqi5VnC8fh20",this);
 
 
         // Intro Alert Message

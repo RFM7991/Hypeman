@@ -40,7 +40,6 @@ public class VideoGalleryActivity extends AppCompatActivity {
 
         // layout manager
         layoutManager = new GridLayoutManager(this, 2);
-        ((GridLayoutManager) layoutManager).setReverseLayout(true);
         recyclerView.setLayoutManager(layoutManager);
 
         // init adapter

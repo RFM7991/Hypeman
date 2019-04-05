@@ -7,6 +7,8 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 class RetrieveFeedTask extends AsyncTask<String, Void, String> {
 
@@ -30,7 +32,8 @@ class RetrieveFeedTask extends AsyncTask<String, Void, String> {
             URL url = new URL(API_URL);
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestProperty("secret-key", "$2a$10$EPfJXSb9ngHBmHphdZ8Zfuk0YzPduXaA9LaGPAuuzjYFDgAKrIZ3S");
-            Log.i("INFO", "URL " + url.toString());
+
+
             try {
                 StringBuilder stringBuilder;
                 try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()))) {
