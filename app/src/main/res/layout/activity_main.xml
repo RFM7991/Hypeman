@@ -13,6 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="invisible"
+        android:background="#000000"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -295,7 +296,7 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.80" />
 
-    <!--
+
     <fragment
         android:id="@+id/youtubeplayerfragment"
         android:name="com.google.android.youtube.player.YouTubePlayerFragment"
@@ -309,7 +310,7 @@
         app:layout_constraintTop_toTopOf="@+id/guideline15"
         app:layout_constraintWidth_default="percent"
         app:layout_constraintWidth_percent="1" />
-        -->
+
 
 
 

@@ -124,8 +124,8 @@ public class MainActivity extends AppCompatActivity implements YouTubePlayer.OnI
         loadLyrics(10);
 
         // Youtube
-    //    YouTubePlayerFragment youTubePlayerFragment = (YouTubePlayerFragment) getFragmentManager().findFragmentById(R.id.youtubeplayerfragment);
-    //   youTubePlayerFragment.initialize("AIzaSyBVSgb0m8KxkiAwdFm0YWdsqi5VnC8fh20",this);
+        YouTubePlayerFragment youTubePlayerFragment = (YouTubePlayerFragment) getFragmentManager().findFragmentById(R.id.youtubeplayerfragment);
+       youTubePlayerFragment.initialize("AIzaSyBVSgb0m8KxkiAwdFm0YWdsqi5VnC8fh20",this);
 
 
         // Intro Alert Message
@@ -322,7 +322,6 @@ public class MainActivity extends AppCompatActivity implements YouTubePlayer.OnI
     public void pressCamera(View view) throws IOException {
         RelativeLayout cameraPreview = (RelativeLayout) findViewById(R.id.container2);
         Button cameraButton = (Button) findViewById(R.id.video_switch);
-        Button recordButton = (Button) findViewById(R.id.video);
         Drawable cameraOn = getResources().getDrawable(R.drawable.ic_camera_on);
         Drawable cameraOff = getResources().getDrawable(R.drawable.ic_camera_off);
         ImageView headphones = (ImageView) findViewById(R.id.headphones);

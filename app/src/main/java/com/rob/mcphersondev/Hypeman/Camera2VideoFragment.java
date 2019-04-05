@@ -294,7 +294,7 @@ public class Camera2VideoFragment extends Fragment
         for (Size option : choices) {
             Log.d("RFMCamera", "optimal sizes" + option);
            if (option.getHeight() == option.getWidth() * h / w && option.getWidth() >= width && option.getHeight() >= height) {
-       //     if (option.getHeight() == option.getWidth() * h / w && option.getWidth() <= width && option.getHeight() <= height) {
+     //      if (option.getHeight() == option.getWidth() * h / w && option.getWidth() <= width && option.getHeight() <= height) {
                 bigEnough.add(option);
             }
         }
@@ -654,7 +654,6 @@ public class Camera2VideoFragment extends Fragment
             mNextVideoAbsolutePath = getVideoFilePath(getActivity());
                 nextVideoFile = new File(mNextVideoAbsolutePath);
 
-       //     mNextVideoAbsolutePath = getVideoFilePath2();
         }
 
 
@@ -698,7 +697,7 @@ public class Camera2VideoFragment extends Fragment
 
         int fileNumber = dir.listFiles().length;
         return (dir == null ? "" : (dir.getAbsolutePath() + "/"))
-                 + fileNumber + ".mp4";
+                 + fileName + ".mp4";
     }
 
     private void startRecordingVideo() {
