@@ -119,12 +119,12 @@ public class Camera2VideoFragment extends Fragment
     private Button mButtonVideo;
 
     /**
-     * A reference to the opened {@link android.hardware.camera2.CameraDevice}.
+     * A reference to the opened {@link CameraDevice}.
      */
     private CameraDevice mCameraDevice;
 
     /**
-     * A reference to the current {@link android.hardware.camera2.CameraCaptureSession} for
+     * A reference to the current {@link CameraCaptureSession} for
      * preview.
      */
     private CameraCaptureSession mPreviewSession;
@@ -163,12 +163,12 @@ public class Camera2VideoFragment extends Fragment
     };
 
     /**
-     * The {@link android.util.Size} of camera preview.
+     * The {@link Size} of camera preview.
      */
     private Size mPreviewSize;
 
     /**
-     * The {@link android.util.Size} of video recording.
+     * The {@link Size} of video recording.
      */
     private Size mVideoSize;
 
@@ -609,7 +609,7 @@ public class Camera2VideoFragment extends Fragment
     }
 
     /**
-     * Configures the necessary {@link android.graphics.Matrix} transformation to `mTextureView`.
+     * Configures the necessary {@link Matrix} transformation to `mTextureView`.
      * This method should not to be called until the camera preview size is determined in
      * openCamera, or until the size of `mTextureView` is fixed.
      *

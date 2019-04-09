@@ -2,9 +2,11 @@ package com.rob.mcphersondev.Hypeman;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.hardware.camera2.CameraDevice;
 import android.media.ImageReader;
+import android.net.Uri;
 import android.os.Build;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
@@ -40,8 +42,13 @@ import android.hardware.camera2.CaptureRequest;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.util.Size;
+import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity implements YouTubePlayer.OnInitializedListener {
+import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence;
+import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView;
+import uk.co.deanwild.materialshowcaseview.ShowcaseConfig;
+
+public class MainActivity extends AppCompatActivity implements YouTubePlayer.OnInitializedListener,  View.OnClickListener, CameraKitFragment.OnFragmentInteractionListener {
 
     // hello test more comments yeah
     
@@ -102,6 +109,12 @@ public class MainActivity extends AppCompatActivity implements YouTubePlayer.OnI
     private Bundle savedState;
     ///////////////////////
 
+    // show case
+    private int counter = 0;
+    private TextView rootpreview;
+    private Button rootButton, moreButton, cameraButton;
+    private static final String SHOWCASE_ID = "sequence example";
+
     // Recorder 2
 
     @Override
@@ -129,10 +142,6 @@ public class MainActivity extends AppCompatActivity implements YouTubePlayer.OnI
 
 
         // Intro Alert Message
-        new AlertDialog.Builder(this)
-                .setMessage(R.string.intro_message)
-                .setPositiveButton(android.R.string.ok, null)
-                .show();
 
         cameraFragment = null;
 
@@ -175,7 +184,115 @@ public class MainActivity extends AppCompatActivity implements YouTubePlayer.OnI
                 return false;
             }
         });
+        // ping for new rhymes
         ping();
+
+        // showcase
+        rootpreview = findViewById(R.id.nextRoot);
+        rootButton = findViewById(R.id.rootButton);
+        moreButton = findViewById(R.id.centerButton);
+        cameraButton = findViewById(R.id.video_switch);
+    //    MaterialShowcaseView.resetSingleUse(this, SHOWCASE_ID);
+        presentShowcaseSequence();
+
+    }
+
+    @Override
+    public void onClick(View v) {
+/*
+        if (v.getId() == R.id.rootButton || v.getId() == R.id.nextRoot || v.getId() == R.id.centerButton
+        || v.getId() == R.id.video_switch || v.getId() == R.id.gallery_button) {
+
+            presentShowcaseSequence();
+        }
+*/
+    }
+
+    // tutorial showcase
+    private void presentShowcaseSequence() {
+
+        ShowcaseConfig config = new ShowcaseConfig();
+        config.setDelay(250); // half second between each showcase view
+
+        MaterialShowcaseSequence sequence = new MaterialShowcaseSequence(this, SHOWCASE_ID);
+
+        sequence.setOnItemShownListener(new MaterialShowcaseSequence.OnSequenceItemShownListener() {
+            @Override
+            public void onShow(MaterialShowcaseView itemView, int position) {
+          //      Toast.makeText(itemView.getContext(), "Item #" + position, Toast.LENGTH_SHORT).show();
+
+                if (position == 0 ) {
+                    try {
+                        pressRoot(itemView);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                else if (position == 2) {
+                    try {
+                        pressLyric(itemView);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+            }
+        });
+
+        sequence.setConfig(config);
+
+        sequence.addSequenceItem(
+                new MaterialShowcaseView.Builder(this)
+                        .setTarget(rootButton)
+                        .setDismissText("GOT IT")
+                        .setContentText("This is the root button. This word controls the rhyme scheme of the words below. Tap this button to cycle to the next root.")
+                        .setMaskColour(R.color.colorPrimaryDark)
+                        .build()
+        );
+
+        sequence.addSequenceItem(
+                new MaterialShowcaseView.Builder(this)
+                        .setTarget(rootpreview)
+                        .setDismissText("GOT IT")
+                        .setContentText("This is the root preview. This is the next root word.")
+                        .withRectangleShape(false)
+                        .setMaskColour(R.color.colorPrimaryDark)
+                        .build()
+        );
+
+        sequence.addSequenceItem(
+                new MaterialShowcaseView.Builder(this)
+                        .setTarget(moreButton)
+                        .setDismissText("GOT IT")
+                        .setMaskColour(R.color.colorPrimaryDark)
+                        .setContentText("This is the More Lyrics button. Tap this button to cycle the bottom three rhymes. Or tap each individual lyric to change one at a time. ")
+                        .build()
+        );
+
+        sequence.addSequenceItem(
+                new MaterialShowcaseView.Builder(this)
+                        .setTarget(cameraButton)
+                        .setDismissText("GOT IT")
+                        .setMaskColour(R.color.colorPrimaryDark)
+                        .setContentText("This is the camera switch. Record yourself and share with @hypemanapp on instagram for chance to get posted!")
+                        .build()
+        );
+
+        sequence.addSequenceItem(
+                new MaterialShowcaseView.Builder(this)
+                        .setTarget(galleryButton)
+                        .setDismissText("GOT IT")
+                        .setMaskColour(R.color.colorPrimaryDark)
+                        .setContentText("This is the video gallery button. You can manage your recordings here.")
+                        .build()
+        );
+
+        sequence.start();
+
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -331,10 +448,9 @@ public class MainActivity extends AppCompatActivity implements YouTubePlayer.OnI
         if (savedState == null && cameraPreview.getVisibility() == View.INVISIBLE) {
             cameraPreview.setVisibility(View.VISIBLE);
 
-
             //test camera
-            getFragmentManager().beginTransaction()
-                    .add(R.id.container2, Camera2VideoFragment.newInstance(), "cameraFragment")
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.container2, CameraKitFragment.newInstance(), "cameraFragment")
                     .commit();
 
             // change camera button
@@ -705,4 +821,8 @@ public class MainActivity extends AppCompatActivity implements YouTubePlayer.OnI
     }
 
 
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
+    }
 }

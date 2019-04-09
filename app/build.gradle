@@ -23,6 +23,8 @@ android {
 
 repositories {
     mavenCentral()
+    jcenter()
+    maven { url "https://jitpack.io" }
     flatDir {
         dirs 'libs'
     }
@@ -40,6 +42,9 @@ dependencies {
     implementation files('libs/json-simple-1.1.1.jar')
     // This library handles authentication and authorization
     implementation 'com.spotify.android:auth:1.0.0-alpha'
+    implementation 'com.github.deano2390:MaterialShowcaseView:1.3.3@aar'
+    implementation 'com.wonderkiln:camerakit:0.13.4'
+
     // This library handles music playback
     implementation files('libs/YouTubeAndroidPlayerApi.jar')
     implementation 'com.android.support:support-v4:28.0.0'

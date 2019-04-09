@@ -23,7 +23,7 @@ import java.util.ArrayList;
 public class VideoGalleryActivity extends AppCompatActivity {
 
     private  File[] files;
-    private  VideoView video;
+    private File directory;
 
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
@@ -42,8 +42,11 @@ public class VideoGalleryActivity extends AppCompatActivity {
         layoutManager = new GridLayoutManager(this, 2);
         recyclerView.setLayoutManager(layoutManager);
 
+        // video directory
+        directory = getDirectory();
+
         // init adapter
-        mAdapter = new VideoRecyclerViewAdapter(this, loadVideoPaths());
+        mAdapter = new VideoRecyclerViewAdapter(this, loadVideoPaths(directory));
         recyclerView.setAdapter(mAdapter);
         recyclerView.setItemViewCacheSize(20);
         recyclerView.setDrawingCacheEnabled(true);
@@ -51,18 +54,19 @@ public class VideoGalleryActivity extends AppCompatActivity {
 
     }
 
-    public ArrayList<String> loadVideoPaths() {
-        File vidFolder = getBaseContext().getExternalFilesDir(null);
-
-        files  = vidFolder.listFiles();
+    public ArrayList<String> loadVideoPaths(File dir) {
         ArrayList<String> fileList = new ArrayList<String>();
+        files  = dir.listFiles();
 
-        // load from list to array
-        for (File e: files) {
-            fileList.add(e.getPath());
+        if (files != null) {
+
+            // load from list to array
+            for (File e : files) {
+                fileList.add(e.getPath());
+            }
+            return fileList;
         }
-        Log.d("recycler", " "+ fileList.size());
-        return fileList;
+        else return fileList;
     }
 
     // to do - seek to for all videos for thumbnail
@@ -73,5 +77,15 @@ public class VideoGalleryActivity extends AppCompatActivity {
     public void launchMain() {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
+    }
+
+    public File getDirectory() {
+        File mydir = new File(Environment.getExternalStorageDirectory(), "Hypeman"); //Creating an internal dir;
+        if (!mydir.exists())
+        {
+            mydir.mkdirs();
+        }
+
+        return mydir;
     }
 }
