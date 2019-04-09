@@ -195,9 +195,6 @@ public class CameraKitFragment extends Fragment {
                     Log.d("RFM", "Video saved: " + videoPath);
                     launchShare(videoPath);
 
-                    // increase volume to previous
-                    if (!mAudioManager.isWiredHeadsetOn() && ! mAudioManager.isBluetoothA2dpOn() && ! mAudioManager.isBluetoothScoOn())
-                        mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, currentVolume, AudioManager.FLAG_SHOW_UI);
 
                 }
                 // The File parameter is an MP4 file.
@@ -220,16 +217,11 @@ public class CameraKitFragment extends Fragment {
                     // set button
                     recordButton.setText(REC);
 
-                    //To decrease media player volume
-                    if (!mAudioManager.isWiredHeadsetOn() && ! mAudioManager.isBluetoothA2dpOn() && ! mAudioManager.isBluetoothScoOn()) {
-                        currentVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
-                        int maxVolume = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
-                        float percent = 0.3f;
-                        int recordingVolume = (int) (maxVolume * percent);
-                        Log.d("vol", "rec" + recordingVolume + ", cur" + currentVolume );
-                        if (mAudioManager.getStreamVolume(AudioManager.STREAM_SYSTEM) > recordingVolume)
-                            mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, recordingVolume, AudioManager.FLAG_SHOW_UI);
-                    }
+                    // increase volume to previous
+                    if (!mAudioManager.isWiredHeadsetOn() && ! mAudioManager.isBluetoothA2dpOn() && ! mAudioManager.isBluetoothScoOn())
+                        mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, currentVolume, AudioManager.FLAG_SHOW_UI);
+
+
                 }
 
                 // start Recording
@@ -240,6 +232,18 @@ public class CameraKitFragment extends Fragment {
 
                     // set button
                     recordButton.setText(STOP);
+
+
+                    //To decrease media player volume
+                    if (!mAudioManager.isWiredHeadsetOn() && ! mAudioManager.isBluetoothA2dpOn() && ! mAudioManager.isBluetoothScoOn()) {
+                        currentVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+                        int maxVolume = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+                        float percent = 0.3f;
+                        int recordingVolume = (int) (maxVolume * percent);
+                        Log.d("vol", "rec" + recordingVolume + ", cur" + currentVolume );
+                        if (mAudioManager.getStreamVolume(AudioManager.STREAM_SYSTEM) > recordingVolume)
+                            mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, recordingVolume, AudioManager.FLAG_SHOW_UI);
+                    }
 
 
                 }
