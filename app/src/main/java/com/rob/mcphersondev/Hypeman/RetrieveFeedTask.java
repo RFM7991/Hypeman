@@ -1,7 +1,10 @@
 package com.rob.mcphersondev.Hypeman;
 
+import android.app.Activity;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -13,6 +16,7 @@ import java.util.HashMap;
 class RetrieveFeedTask extends AsyncTask<String, Void, String> {
 
     private Exception exception;
+    private Activity context;
 
 
     protected void onPreExecute() {
@@ -52,6 +56,7 @@ class RetrieveFeedTask extends AsyncTask<String, Void, String> {
         }
         catch(Exception e) {
             Log.e("ERROR", e.getMessage(), e);
+            System.exit(0);
             return null;
         }
     }
@@ -60,6 +65,15 @@ class RetrieveFeedTask extends AsyncTask<String, Void, String> {
         if(response == null) {
             response = "THERE WAS AN ERROR";
         }
+    }
+
+
+    public Activity getContext() {
+        return context;
+    }
+
+    public void setContext(Activity context) {
+        this.context = context;
     }
 }
 

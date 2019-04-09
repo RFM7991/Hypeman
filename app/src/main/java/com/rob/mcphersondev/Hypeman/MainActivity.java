@@ -1,6 +1,7 @@
 package com.rob.mcphersondev.Hypeman;
 
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -399,10 +400,22 @@ public class MainActivity extends AppCompatActivity implements YouTubePlayer.OnI
         }
     }
 
+    public void exitApp() {
+        ;
+        if (null != this) {
+            Toast.makeText(this, R.string.internet_message,
+                    Toast.LENGTH_SHORT).show();
+            this.finish();
+            System.exit(0);
+        }
+
+    }
+
     //initCAPI
     // call API, update Lyric Pool Array
     public void  initCAPI(String query, String url) throws JSONException {
         RetrieveFeedTask task = new RetrieveFeedTask();
+        task.setContext(this);
         task.execute(query, url);
 
         String results = null;
@@ -415,16 +428,23 @@ public class MainActivity extends AppCompatActivity implements YouTubePlayer.OnI
             e.printStackTrace();
         }
 
+
         try {
-            JSONArr = new JSONArray(results);
-            for (int i =0;i < JSONArr.length(); i++) {
-                Log.i("initCAPI", JSONArr.getJSONObject(i).get("url").toString());
-                String rootWord = JSONArr.getJSONObject(i).get("root").toString();
-                String rootUrl = JSONArr.getJSONObject(i).get("url").toString();
-                rootArr.add(new Root(rootWord, rootUrl));
+                JSONArr = new JSONArray(results);
+            if (JSONArr == null) {
+
+            } else {
+                for (int i =0;i < JSONArr.length(); i++) {
+                    Log.i("initCAPI", JSONArr.getJSONObject(i).get("url").toString());
+                    String rootWord = JSONArr.getJSONObject(i).get("root").toString();
+                    String rootUrl = JSONArr.getJSONObject(i).get("url").toString();
+                    rootArr.add(new Root(rootWord, rootUrl));
+                }
+
             }
         } catch (JSONException e) {
             e.printStackTrace();
+            finish();
         }
     }
 

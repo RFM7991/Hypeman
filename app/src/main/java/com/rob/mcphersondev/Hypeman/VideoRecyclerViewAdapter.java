@@ -183,7 +183,7 @@ public class VideoRecyclerViewAdapter extends RecyclerView.Adapter<VideoRecycler
         activity.startActivity(intent);
     }
 
-    public void launchShare(String p) {
+    public void launchShareOld(String p) {
 
         // launch share video intent
         Intent sendIntent = new Intent();
@@ -194,6 +194,24 @@ public class VideoRecyclerViewAdapter extends RecyclerView.Adapter<VideoRecycler
         sendIntent.putExtra(Intent.EXTRA_STREAM, uri);
         // this.onPause();
         activity.startActivity(Intent.createChooser(sendIntent, "Share video"));
+    }
+
+    public void launchShare(String p) {
+        File file = new File(p);
+        Intent install = new Intent(Intent.ACTION_SEND);
+        install.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        // New Approach
+        Uri apkURI = FileProvider.getUriForFile(
+                activity.getBaseContext(),
+                activity.getApplicationContext()
+                        .getPackageName() + ".provider", file);
+        install.setDataAndType(apkURI, "video/mp4");
+        install.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+        // End New Approach
+        activity.startActivity(install);
+
     }
 
     public void launchDeleteDialog(String p, int pos) {

@@ -16,6 +16,7 @@ import android.support.v13.app.FragmentCompat;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -63,7 +64,7 @@ public class CameraKitFragment extends Fragment {
     private String videoPath;
 
     private  AudioManager mAudioManager;
-    private int currentVolume;
+    private int currentVolume, systemVolume;
 
     private Button recordButton;
 
@@ -192,13 +193,13 @@ public class CameraKitFragment extends Fragment {
                 if (null != activity) {
                     Toast.makeText(activity, "Video saved: " + videoPath,
                             Toast.LENGTH_SHORT).show();
-                    Log.d("RFM", "Video saved: " + videoPath);
-                    launchShare(videoPath);
+         //           Log.d("RFM", "Video saved: " + videoPath);
+          //          launchShare(videoPath);
 
 
                 }
                 // The File parameter is an MP4 file.
-                Log.d("RFM", cameraKitVideo.getVideoFile().getAbsolutePath());
+           //     Log.d("RFM", cameraKitVideo.getVideoFile().getAbsolutePath());
 
 
             }
@@ -218,8 +219,11 @@ public class CameraKitFragment extends Fragment {
                     recordButton.setText(REC);
 
                     // increase volume to previous
-                    if (!mAudioManager.isWiredHeadsetOn() && ! mAudioManager.isBluetoothA2dpOn() && ! mAudioManager.isBluetoothScoOn())
+                    if (!mAudioManager.isWiredHeadsetOn() && ! mAudioManager.isBluetoothA2dpOn() && ! mAudioManager.isBluetoothScoOn()) {
                         mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, currentVolume, AudioManager.FLAG_SHOW_UI);
+                    }
+
+                    mAudioManager.setStreamVolume(AudioManager.STREAM_SYSTEM, systemVolume, AudioManager.FLAG_SHOW_UI);
 
 
                 }
@@ -238,10 +242,16 @@ public class CameraKitFragment extends Fragment {
                     if (!mAudioManager.isWiredHeadsetOn() && ! mAudioManager.isBluetoothA2dpOn() && ! mAudioManager.isBluetoothScoOn()) {
                         currentVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
                         int maxVolume = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
-                        float percent = 0.3f;
+                        float percent = 0.15f;
                         int recordingVolume = (int) (maxVolume * percent);
-                        Log.d("vol", "rec" + recordingVolume + ", cur" + currentVolume );
-                        if (mAudioManager.getStreamVolume(AudioManager.STREAM_SYSTEM) > recordingVolume)
+                        Log.d("vol", "rec" + recordingVolume + ", cur" + currentVolume);
+
+                        // button volume
+                        systemVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
+                        mAudioManager.setStreamVolume(AudioManager.STREAM_SYSTEM, 0, AudioManager.FLAG_SHOW_UI);
+
+                        // music volume
+                        if (mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC) > recordingVolume)
                             mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, recordingVolume, AudioManager.FLAG_SHOW_UI);
                     }
 
@@ -253,16 +263,21 @@ public class CameraKitFragment extends Fragment {
     }
 
     public void launchShare(String p) {
+        File file = new File(p);
+        Intent install = new Intent(Intent.ACTION_SEND);
+        install.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
 
-        // launch share video intent
-        Intent sendIntent = new Intent();
-        sendIntent.setAction(Intent.ACTION_SEND);
-        sendIntent.setType("video/mp4");
-        File vid = new File(p);
-        Uri uri = Uri.fromFile(vid);
-        sendIntent.putExtra(Intent.EXTRA_STREAM, uri);
-        // this.onPause();
-        startActivity(Intent.createChooser(sendIntent, "Share video"));
+        // New Approach
+        Uri apkURI = FileProvider.getUriForFile(
+                getActivity().getBaseContext(),
+                getActivity().getApplicationContext()
+                        .getPackageName() + ".provider", file);
+        install.setDataAndType(apkURI, "video/mp4");
+        install.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+        // End New Approach
+        getActivity().startActivity(install);
+
     }
 
 
